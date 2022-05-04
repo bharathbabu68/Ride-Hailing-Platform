@@ -1,7 +1,3 @@
-import { Component } from "react";
-import { Container, Form, Button, Row, Col,Image } from "react-bootstrap";
-
-import TextField from '@mui/material/TextField';
 import {
     Box,
     ButtonGroup,
@@ -13,9 +9,9 @@ import {
     Text,
   } from '@chakra-ui/react'
 
-import { FaLocationArrow, FaTimes } from 'react-icons/fa';
+  import { FaLocationArrow, FaTimes } from 'react-icons/fa'
 
-
+  import { Container, Row, Col, Card, Button, Dropdown ,Spinner,Modal,Form, Carousel, Toast } from "react-bootstrap";
   
   import {
     useJsApiLoader,
@@ -28,7 +24,7 @@ import { FaLocationArrow, FaTimes } from 'react-icons/fa';
   
   const center = { lat: 48.8584, lng: 2.2945 }
   
-  function Maps(props) {
+  function RideBooking() {
     const { isLoaded } = useJsApiLoader({
       googleMapsApiKey: "AIzaSyCCQlQuetd7_VFAbfWIy4yD8xjxEoAjmzI",
       libraries: ['places'],
@@ -38,9 +34,6 @@ import { FaLocationArrow, FaTimes } from 'react-icons/fa';
     const [directionsResponse, setDirectionsResponse] = useState(null)
     const [distance, setDistance] = useState('')
     const [duration, setDuration] = useState('')
-    const [source, setsource] = useState(props.source);
-    const [destination, setdestination] = useState(props.destination);
-    
   
     /** @type React.MutableRefObject<HTMLInputElement> */
     const originRef = useRef()
@@ -58,8 +51,8 @@ import { FaLocationArrow, FaTimes } from 'react-icons/fa';
       // eslint-disable-next-line no-undef
       const directionsService = new google.maps.DirectionsService()
       const results = await directionsService.route({
-        origin: source,
-        destination: destination,
+        origin: originRef.current.value,
+        destination: destiantionRef.current.value,
         // eslint-disable-next-line no-undef
         travelMode: google.maps.TravelMode.DRIVING,
       })
@@ -77,13 +70,9 @@ import { FaLocationArrow, FaTimes } from 'react-icons/fa';
     }
   
     return (
-      <Flex
-        position='relative'
-        flexDirection='column'
-        alignItems='center'
-        h='100vh'
-        w='100vw'
-      >
+      <Container fluid>
+          <Row>
+        <Col md={6}>
         <Box position='absolute' left={0} top={0} h='100%' w='50%'>
           {/* Google Map Box */}
           <GoogleMap
@@ -104,6 +93,12 @@ import { FaLocationArrow, FaTimes } from 'react-icons/fa';
             )}
           </GoogleMap>
         </Box>
+        </Col>
+        <Col md={6}>
+            <div style={{backgroundColor:"black", width:"450px", height:"250px"}}>
+
+            </div>
+        </Col>
         <Box
           p={4}
           borderRadius='lg'
@@ -116,8 +111,7 @@ import { FaLocationArrow, FaTimes } from 'react-icons/fa';
           <HStack spacing={2} justifyContent='space-between'>
             <Box flexGrow={1}>
               <Autocomplete>
-                <Input 
-                type='text' placeholder='Origin' ref={originRef} />
+                <Input type='text' placeholder='Origin' ref={originRef} />
               </Autocomplete>
             </Box>
             <Box flexGrow={1}>
@@ -155,74 +149,9 @@ import { FaLocationArrow, FaTimes } from 'react-icons/fa';
             />
           </HStack>
         </Box>
-      </Flex>
+        </Row>
+      </Container>
     )
   }
- 
-
-class BookRide extends Component{
-    constructor(props){
-        super(props);
-        this.state={
-         source:"",
-         destination:""
-            
-        }
-       
-    }
-    
-    
-    render(){
-        return(
-            <>
-            <Container fluid style={{backgroundColor:"#EEEEEE"}}>
-            <Row>
-            <Col md={6}>
-            <div className="" style={{height:"fit-content"}}>
-            <h1>Get Started,</h1>
-            <h1>Book A Ride</h1>
-            <Form>
-            <Form.Group className="mb-3">
-                <Form.Label>Enter Source</Form.Label>
-                <Autocomplete>
-                <Input 
-                type='text' placeholder='Origin' onChange={(e)=>{
-                    this.setState({source:e.target.value})
-                }} />
-              </Autocomplete>
-            </Form.Group>
-
-            <Form.Group className="mb-3" controlId="formBasicPassword">
-                <Form.Label>Enter Destination</Form.Label>
-                <Autocomplete>
-                <Input 
-                type='text' placeholder='Origin' onChange={(e)=>{
-                    this.setState({destination:e.target.value})
-                }} />
-              </Autocomplete>
-            </Form.Group>
-            
-            {/* <TextField  style={{width:"50%"}} id="standard-basic" label="Enter Source" variant="standard" />
-            <TextField  style={{width:"50%"}} id="standard-basic" label="Enter Destination" variant="standard" />
-             */}
-            </Form>
-            <Button className="mt-5" variant="primary"  style={{marginLeft:"40%"}}>
-                Book Ride
-            </Button>
-            </div>
-
-            </Col>
-            <Col md={6}>
-                <Maps source={this.state.source} destination={this.state.destination}/>
-            </Col>
-            </Row>
-            </Container>
-           
-            
-            </>
-        )
-    }
-}
-
-
-export default BookRide;
+  
+  export default RideBooking

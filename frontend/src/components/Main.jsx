@@ -3,6 +3,7 @@ import Home from './Home';
 import Maps from './Maps';
 import {  BrowserRouter,  Switch, Route, Link, } from "react-router-dom";
 import BookRide from './BookRide';
+import RideBooking from './RideBooking';
 
 class Main extends Component{
 
@@ -17,6 +18,10 @@ class Main extends Component{
                
                 <BrowserRouter>
                 <Switch>
+
+                    <Route path="/ridebooking">
+                        <RideBooking/>
+                    </Route>
 
                     <Route path="/bookride">
                             <BookRide/>
