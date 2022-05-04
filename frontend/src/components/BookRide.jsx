@@ -1,6 +1,9 @@
+import { Component } from "react";
+import { Container, Form, Button, Row, Col,Image } from "react-bootstrap";
+
+import TextField from '@mui/material/TextField';
 import {
     Box,
-    Button,
     ButtonGroup,
     Flex,
     HStack,
@@ -9,7 +12,10 @@ import {
     SkeletonText,
     Text,
   } from '@chakra-ui/react'
-  import { FaLocationArrow, FaTimes } from 'react-icons/fa'
+
+import { FaLocationArrow, FaTimes } from 'react-icons/fa';
+
+
   
   import {
     useJsApiLoader,
@@ -32,6 +38,9 @@ import {
     const [directionsResponse, setDirectionsResponse] = useState(null)
     const [distance, setDistance] = useState('')
     const [duration, setDuration] = useState('')
+    const [source, setsource] = useState(props.source);
+    const [destination, setdestination] = useState(props.destination);
+    
   
     /** @type React.MutableRefObject<HTMLInputElement> */
     const originRef = useRef()
@@ -49,8 +58,8 @@ import {
       // eslint-disable-next-line no-undef
       const directionsService = new google.maps.DirectionsService()
       const results = await directionsService.route({
-        origin: originRef.current.value,
-        destination: destiantionRef.current.value,
+        origin: source,
+        destination: destination,
         // eslint-disable-next-line no-undef
         travelMode: google.maps.TravelMode.DRIVING,
       })
@@ -107,7 +116,8 @@ import {
           <HStack spacing={2} justifyContent='space-between'>
             <Box flexGrow={1}>
               <Autocomplete>
-                <Input type='text' placeholder='Origin' ref={originRef} />
+                <Input 
+                type='text' placeholder='Origin' ref={originRef} />
               </Autocomplete>
             </Box>
             <Box flexGrow={1}>
@@ -148,5 +158,72 @@ import {
       </Flex>
     )
   }
-  
-  export default Maps
+ 
+
+class BookRide extends Component{
+    constructor(props){
+        super(props);
+        this.state={
+         source:"",
+         destination:""
+            
+        }
+       
+    }
+    
+    
+    render(){
+        return(
+            <>
+            <Container fluid style={{backgroundColor:"#EEEEEE"}}>
+            <Row>
+            <Col md={6}>
+            <div className="" style={{height:"fit-content"}}>
+            <h1>Get Started,</h1>
+            <h1>Book A Ride</h1>
+            <Form>
+            <Form.Group className="mb-3">
+                <Form.Label>Enter Source</Form.Label>
+                <Autocomplete>
+                <Input 
+                type='text' placeholder='Origin' onChange={(e)=>{
+                    this.setState({source:e.target.value})
+                }} />
+              </Autocomplete>
+            </Form.Group>
+
+            <Form.Group className="mb-3" controlId="formBasicPassword">
+                <Form.Label>Enter Destination</Form.Label>
+                <Autocomplete>
+                <Input 
+                type='text' placeholder='Origin' onChange={(e)=>{
+                    this.setState({destination:e.target.value})
+                }} />
+              </Autocomplete>
+            </Form.Group>
+            <Form.Group className="mb-3" controlId="formBasicCheckbox">
+            </Form.Group>
+            {/* <TextField  style={{width:"50%"}} id="standard-basic" label="Enter Source" variant="standard" />
+            <TextField  style={{width:"50%"}} id="standard-basic" label="Enter Destination" variant="standard" />
+             */}
+            </Form>
+            <Button className="mt-5" variant="primary"  style={{marginLeft:"40%"}}>
+                Book Ride
+            </Button>
+            </div>
+
+            </Col>
+            <Col md={6}>
+                <Maps/>
+            </Col>
+            </Row>
+            </Container>
+           
+            
+            </>
+        )
+    }
+}
+
+
+export default BookRide;
