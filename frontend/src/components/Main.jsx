@@ -4,7 +4,8 @@ import Maps from './Maps';
 import {  BrowserRouter,  Switch, Route, Link, } from "react-router-dom";
 import BookRide from './BookRide';
 import RideBooking from './RideBooking';
-
+import Makepayment from './Makepayment';
+import Buytoken from './Buytoken';
 class Main extends Component{
 
     constructor(props){
@@ -19,9 +20,13 @@ class Main extends Component{
                 <BrowserRouter>
                 <Switch>
 
-                    <Route path="/ridebooking">
-                        <RideBooking/>
+                    <Route path="/a">
+                        <Makepayment/>
                     </Route>
+                    <Route path="/b">
+                        <Buytoken/>
+                    </Route>
+                    
 
                     <Route path="/bookride">
                             <BookRide/>
