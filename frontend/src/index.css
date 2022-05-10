@@ -33,3 +33,27 @@ code {
    width: 100% !important;
    object-fit: cover;
  }
+
+ 
+ #ride-box{
+  background: #283048;  /* fallback for old browsers */
+background: -webkit-linear-gradient(to right, #859398, #283048);  /* Chrome 10-25, Safari 5.1-6 */
+background: linear-gradient(to right, #859398, #283048); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
+ }
+
+ #ride-box-outer{
+  background: #F7F8F8;  /* fallback for old browsers */
+background: -webkit-linear-gradient(to right, #ACBB78, #F7F8F8);  /* Chrome 10-25, Safari 5.1-6 */
+background: linear-gradient(to right, #ACBB78, #F7F8F8); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
+ }
+ 
+ #book-ride-form, #book-ride-form:active, #book-ride-form:focus, textarea {
+
+  background-color : #3a3939; 
+  color: white;
+
+}
+
+#book-ride-form::placeholder { color: rgb(222, 219, 219); }

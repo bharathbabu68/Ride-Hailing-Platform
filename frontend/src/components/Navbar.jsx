@@ -31,27 +31,38 @@ class NavBar extends Component {
               <Nav 
                 style={{padding:"10px"}}
               className="ml-auto mr-3">
+
               <div className="navdiv navstyle ">
                   <Nav.Link 
                   style={{color:"white", fontWeight:"bolder", marginRight:'30px'}}
-                  href="/explore" className=" navlinks">
-                    Explorer
+                  href="/" className=" navlinks">
+                    Home
                   </Nav.Link>
                 </div>
                
                 <div className="navdiv  navstyle ">
                   <Nav.Link 
                   style={{color:"white", fontWeight:"bolder", marginRight:'30px'}}
-                   href="/bidstats" className=" navlinks">
-                    My Bid Stats
+                   href="/bookride" className=" navlinks">
+                    Book Ride
                   </Nav.Link>
                 </div>
+
                 <div className="navdiv navstyle ">
                   <Nav.Link  
                   id="name"
                   style={{color:"white", fontWeight:"bolder", marginRight:'30px'}}
-                  href="/" className=" navlinks" onClick={()=>{
-                    localStorage.removeItem('user');
+                  href="/purchase" className=" navlinks" onClick={()=>{
+                  }}>
+                    Buy Tokens
+                  </Nav.Link>
+                </div>
+
+                <div className="navdiv navstyle ">
+                  <Nav.Link  
+                  id="name"
+                  style={{color:"white", fontWeight:"bolder", marginLeft:'850px'}}
+                  href="/login" className=" navlinks" onClick={()=>{
                   }}>
                     Login
                   </Nav.Link>

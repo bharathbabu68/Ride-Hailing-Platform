@@ -2,10 +2,9 @@ import {Component} from 'react';
 import Home from './Home';
 import Maps from './Maps';
 import {  BrowserRouter,  Switch, Route, Link, } from "react-router-dom";
-import BookRide from './BookRide';
-import RideBooking from './RideBooking';
 import Makepayment from './Makepayment';
 import Buytoken from './Buytoken';
+import PaymentPage from './PaymentPage';
 class Main extends Component{
 
     constructor(props){
@@ -20,20 +19,21 @@ class Main extends Component{
                 <BrowserRouter>
                 <Switch>
 
-                    <Route path="/a">
+                    <Route path="/temp">
+                        <PaymentPage/>
+                    </Route>
+
+                    <Route path="/payment">
                         <Makepayment/>
                     </Route>
-                    <Route path="/b">
+
+                    <Route path="/purchase">
                         <Buytoken/>
                     </Route>
                     
 
                     <Route path="/bookride">
-                            <BookRide/>
-                    </Route>
-
-                    <Route path="/maps">
-                        <Maps/>
+                            <Maps/>
                     </Route>
 
                     <Route path="/">

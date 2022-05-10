@@ -1,5 +1,5 @@
 import { Component } from "react";
-import Navbar from "./Navbar";
+import NavBar from "./NavBar";
 import { Container, Row, Col, Card, Button, Dropdown ,Spinner,Modal,Form, Carousel, Toast } from "react-bootstrap";
 const { ethers } = require("ethers");
 
@@ -76,7 +76,7 @@ class Home extends Component{
             </Toast>
 
             {/* Navbar */}
-            <Navbar/>
+            <NavBar/>
 
             {/* Container */}
             <Container fluid>
