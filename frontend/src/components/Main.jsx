@@ -19,12 +19,8 @@ class Main extends Component{
                 <BrowserRouter>
                 <Switch>
 
-                    <Route path="/temp">
-                        <PaymentPage/>
-                    </Route>
-
                     <Route path="/payment">
-                        <Makepayment/>
+                        <PaymentPage/>
                     </Route>
 
                     <Route path="/purchase">
