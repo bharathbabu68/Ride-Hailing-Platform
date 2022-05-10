@@ -10,7 +10,7 @@ import {
   } from '@chakra-ui/react'
   import { FaLocationArrow, FaTimes } from 'react-icons/fa'
   import { Container, Row, Col, Card, Button, Dropdown ,Spinner,Modal,Form, Carousel, Toast, Navbar } from "react-bootstrap";
-  
+  import { Link } from "react-router-dom";
   import {
     useJsApiLoader,
     GoogleMap,
@@ -36,7 +36,9 @@ import {
     const [duration, setDuration] = useState('')
     const [ridecostinr, setRidecostinr] = useState('')
     const[ridecostdrhp, setRidecostdrhp] = useState('')
-
+    const[origin, setOrigin] = useState('')
+    const[destination, setDestination] = useState('')
+    const[account, setAccount] = useState('')
     // modal related stuff
     const [showsearchingdriver, setShowsearchingdriver] = useState(false);
     const handleClose = () => setShowsearchingdriver(false);
@@ -87,10 +89,13 @@ import {
           let recovered = await contract.verifyString(message, sig.v, sig.r, sig.s);
           console.log("Recovered:", recovered);
           const account = await signer.getAddress();
+          setAccount(account);
           var res = {"message":message, "signature":signature, "account":account};
           if(account == recovered){
             console.log("Signature verified");
             handleShow();
+
+
           }
           else{
             console.log("Signature not verified");
@@ -111,6 +116,8 @@ import {
         // eslint-disable-next-line no-undef
         travelMode: google.maps.TravelMode.DRIVING,
       })
+      setOrigin(originRef.current.value)
+      setDestination(destiantionRef.current.value)
       setDirectionsResponse(results)
       setDistance(results.routes[0].legs[0].distance.text)
       setDuration(results.routes[0].legs[0].duration.text)
@@ -169,46 +176,7 @@ import {
           minW='container.md'
           zIndex='1'
         >
-          {/* <HStack spacing={2} justifyContent='space-between'>
-            <Box flexGrow={1}>
-              <Autocomplete>
-                <Input type='text' placeholder='Origin' ref={originRef} />
-              </Autocomplete>
-            </Box>
-            <Box flexGrow={1}>
-              <Autocomplete>
-                <Input
-                  type='text'
-                  placeholder='Destination'
-                  ref={destiantionRef}
-                />
-              </Autocomplete>
-            </Box>
-  
-            <ButtonGroup>
-              <Button colorScheme='pink' type='submit' onClick={calculateRoute}>
-                Calculate Route
-              </Button>
-              <IconButton
-                aria-label='center back'
-                icon={<FaTimes />}
-                onClick={clearRoute}
-              />
-            </ButtonGroup>
-          </HStack>
-          <HStack spacing={4} mt={4} justifyContent='space-between'>
-            <Text>Distance: {distance} </Text>
-            <Text>Duration: {duration} </Text>
-            <IconButton
-              aria-label='center back'
-              icon={<FaLocationArrow />}
-              isRound
-              onClick={() => {
-                map.panTo(center)
-                map.setZoom(15)
-              }}
-            />
-          </HStack> */}
+         
               <div id="ride-box" zIndex='1' style={{height:"450px", width:"30rem",padding: "20px",borderRadius:"15px"}}>
               <h1 style={{fontFamily:'Roboto', color:"white"}}>Book a Ride !</h1>
               <Form>
@@ -271,9 +239,33 @@ import {
           <Button variant="secondary" onClick={handleCloseFoundDriverModal}>
             Close
           </Button>
-          <Button variant="primary" onClick={handleCloseFoundDriverModal}>
-            Make Payment
-          </Button>
+        
+
+          <Button variant="primary" onClick={()=>{
+            var key={user_address:account,source:origin,destination:destination,distance:distance,duration:duration,ridecostinr:ridecostinr,ridecostdrhp:ridecostdrhp};
+
+               fetch('http://localhost:4000/payment',{
+                method: 'POST',
+                headers: {
+                    'Content-Type' : 'application/json'
+                },
+                body:JSON.stringify(key)
+            }).then((res)=>{
+                if(res.ok)
+                return res.json();
+            }).then(async(res)=>{
+              // redirect to payment page
+              window.location.href = "http://localhost:3000/payment";
+               
+                
+            })
+                
+                }}>
+Make Payment
+</Button>
+                                   
+         
+         
         </Modal.Footer>
       </Modal>
             </div>

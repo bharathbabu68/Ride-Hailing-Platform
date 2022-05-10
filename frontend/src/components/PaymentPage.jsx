@@ -16,20 +16,62 @@ class PaymentPage extends Component{
             toastshow:false,
             accountaddr: "",
             drhp_balance: "",
-            source: "MIT Main Gate",
-            destination: "Radha Nagar",
-            driver_address: "0x368610772B1dBd5AE2c7FA79A1972dbF3ed1bed5",
-            car: "Tata Indica",
-            car_number: "TN-12-34",
+            source: "",
+            destination: "",
+            driver_address: "",
+            car: "",
+            car_number: "",
             car_type: "sedan", 
-            trip_distance: "50",
-            inr_fare: "300",
-            drhp_fare: "30",
+            trip_distance: "",
+            inr_fare: "",
+            drhp_fare: "",
             contractval: "",
             showAlert: false,
+            spinner:1
         }
+        this.connect = this.connect.bind(this);
+        this.rendercomponent = this.rendercomponent.bind(this);
+
+    }
+    async componentDidMount(){
+
+       await this.connect();
         
-        this.connect();
+        var key={user_address:this.state.accountaddr};
+        console.log("address",this.state.accountaddr);
+        fetch('http://localhost:4000/getridedetails',{
+            method: 'POST',
+            headers: {
+                'Content-Type' : 'application/json'
+            },
+            body:JSON.stringify(key)
+        }).then((res)=>{
+            if(res.ok)
+            return res.json();
+        }).then(async(res)=>{
+          // redirect to payment page
+            console.log(res["driver_details"][0]);
+            res=res["driver_details"][0];
+            await this.setState({
+                
+                source: res.source,
+                destination: res.destination,
+
+               
+                car: res.car,
+                car_number: res.car_no,
+               
+                inr_fare: res.cost*10,
+                drhp_fare: res.cost,
+               trip_distance:(res.cost*10)/6,
+               driver_address: res.driver_address,
+                spinner:0
+
+
+            });
+
+            
+        })
     }
 
     async get_erc20_balance(){
@@ -69,14 +111,16 @@ class PaymentPage extends Component{
         await this.get_erc20_balance();
         var textval = "Your account " + account + " has been connected";
     }
-
-    render(){
-
-        return(
-            <>  
-
-            <NavBar/>
-            <Row style={{paddingTop:"2%"}}>
+    rendercomponent(){
+        if(this.state.spinner==1){
+            return(
+                <Spinner style={{marginTop:"20%",marginLeft:"50%"}} animation="border"  />
+            )
+        }
+        else{
+            return(
+                <>
+                <Row style={{paddingTop:"2%"}}>
                 <Col md={10}>
                     </Col>
                 <Col md={2}>
@@ -154,6 +198,18 @@ class PaymentPage extends Component{
                 
             </Row>
             </Container>
+            </>
+            );
+        }
+    }
+    render(){
+
+        return(
+            <>  
+
+            <NavBar/>
+          {this.rendercomponent()}
+            
                 
             
             </>

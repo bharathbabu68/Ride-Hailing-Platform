@@ -9,7 +9,7 @@ import { Line } from "react-chartjs-2";
 import { Chart as ChartJS, registerables } from 'chart.js';
 import { Chart } from 'react-chartjs-2'
 import NavBar from "./NavBar";
-
+import queryString from 'query-string';
 ChartJS.register(...registerables);
 
 class Buytoken extends Component{
@@ -20,7 +20,9 @@ class Buytoken extends Component{
         this.state = {
           options:"",
           transactions:transactions,
-            data:data
+            data:data,
+            id:"aa",
+            b:"dasd"
        
 
         }    
@@ -44,12 +46,15 @@ class Buytoken extends Component{
         );
 
     }
- 
+    componentDidMount(){
+       
+    }
 
     render(){
         return(
             <>
             <NavBar />
+           
            <Container fluid style={{paddingLeft:"5%", paddingRight:"5%", paddingTop:"3%"}}>
             <h2>Buy DRHP Tokens Here!</h2>
             <hr/>
@@ -65,12 +70,21 @@ class Buytoken extends Component{
                     <h4>Quick Purchase</h4>
                     <br/>
                    
-                    
-                    <Form.Control  style={{height:"40px",marginRight:"20px",width:"80%",display:"inline"}} type="text" placeholder="Enter Amount" />
+                    <Button style={{display:"block",margin:"10px"}} onClick={()=>{
+                        document.getElementById("amountvalue").value=100;
+                    }} variant="outline-success">100 Rs</Button>
+                    <Button style={{display:"block",margin:"10px"}}  onClick={()=>{
+                        document.getElementById("amountvalue").value=200;
+                    }} variant="outline-success">200 Rs</Button>
+                    <Button style={{display:"block",margin:"10px"}}  onClick={()=>{
+                        document.getElementById("amountvalue").value=400;
+                    }} variant="outline-success">400 Rs</Button>
+                    <Form.Control  id="amountvalue"  style={{height:"40px",marginRight:"20px",width:"80%",display:"inline"}} type="text" placeholder="Enter Amount" />
                     <Button 
                     onClick={(e)=>{
                         var orderId ;
-                        var key={"amount":100};
+                        var a=document.getElementById("amountvalue").value;
+                        var key={"amount":a*100};
                       
                             
                 
@@ -91,7 +105,7 @@ class Buytoken extends Component{
                 
                                 
                                 var options = {
-                                "key": "rzp_live_emIx9la2Treo5U", 
+                                "key": "rzp_test_GVFAENjNa3GZRl", 
                                 "amount": "100", 
                                 "currency": "INR",
                                 "name": "XYZ Pvt Ltd",
