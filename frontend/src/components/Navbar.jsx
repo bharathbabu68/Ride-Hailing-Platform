@@ -61,7 +61,27 @@ class NavBar extends Component {
                 <div className="navdiv navstyle ">
                   <Nav.Link  
                   id="name"
-                  style={{color:"white", fontWeight:"bolder", marginLeft:'850px'}}
+                  style={{color:"white", fontWeight:"bolder", marginRight:'30px'}}
+                  href="#" className=" navlinks" onClick={()=>{
+                  }}>
+                    Staking
+                  </Nav.Link>
+                </div>
+
+                <div className="navdiv navstyle ">
+                  <Nav.Link  
+                  id="name"
+                  style={{color:"white", fontWeight:"bolder", marginRight:'30px'}}
+                  href="#" className=" navlinks" onClick={()=>{
+                  }}>
+                    Governance
+                  </Nav.Link>
+                </div>
+
+                <div className="navdiv navstyle ">
+                  <Nav.Link  
+                  id="name"
+                  style={{color:"white", fontWeight:"bolder", marginLeft:'600px'}}
                   href="/login" className=" navlinks" onClick={()=>{
                   }}>
                     Login

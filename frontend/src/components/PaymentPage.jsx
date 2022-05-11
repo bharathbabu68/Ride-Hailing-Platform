@@ -2,6 +2,7 @@ import {Component} from 'react';
 import NavBar from './NavBar';
 import Image from 'react-bootstrap/Image';
 import { erc20_abi } from '../Resources/erc20_abi';
+import { ride_abi } from '../Resources/ride_abi'; 
 import { Container, Row, Col, Card,Accordion, Button, Dropdown ,Spinner,Modal,Form, Carousel, Toast, Alert } from "react-bootstrap";
 const { ethers } = require("ethers");  
 
@@ -25,7 +26,8 @@ class PaymentPage extends Component{
             trip_distance: "50",
             inr_fare: "300",
             drhp_fare: "30",
-            contractval: "",
+            erc20contractval: "",
+            ridecontractval: "",
             showAlert: false,
         }
         
@@ -39,12 +41,15 @@ class PaymentPage extends Component{
         }
         else{
             const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
-            let contractAddress = '0xAb3c057544765120A030a5A0aA8D0468Ed9FA32a';
-            let contract = new ethers.Contract(contractAddress, erc20_abi, provider);
+            let erc20contractAddress = '0xAb3c057544765120A030a5A0aA8D0468Ed9FA32a';
+            let erc20contract = new ethers.Contract(erc20contractAddress, erc20_abi, provider);
+            let ridecontractaddress = '0x9a7fe822279542E65E264044A94B9e493c246f93';
+            let ridecontract = new ethers.Contract(ridecontractaddress, ride_abi, provider);
             this.setState({
-                contractval: contract
+                erc20contractval: erc20contract,
+                ridecontractval: ridecontract
             })
-            var c_drhp_balance = String(await contract.balanceOf(this.state.accountaddr));
+            var c_drhp_balance = String(await erc20contract.balanceOf(this.state.accountaddr));
             c_drhp_balance = ethers.utils.formatUnits(c_drhp_balance, 18)
             this.setState({
                 drhp_balance: c_drhp_balance
@@ -136,16 +141,15 @@ class PaymentPage extends Component{
                         alert("Insufficient DRHP Tokens, please purchase some DRHP Tokens and try booking your ride !");
                     }
                     else{
-                        var contract  = this.state.contractval;
+                        var erc20contract  = this.state.erc20contractval;
                         const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
                         let signer = provider.getSigner();
-                        var contractwithsigner = contract.connect(signer);
+                        var contractwithsigner = erc20contract.connect(signer);
                         // convert drhp fare into wei
                         const parsed_fare = ethers.utils.parseUnits(this.state.drhp_fare, 18);
                         console.log("drhp_fare:", parsed_fare);
                         const tx = await contractwithsigner.approve("0xAb3c057544765120A030a5A0aA8D0468Ed9FA32a", parsed_fare);
                         await tx.wait();
-                        alert("Your ride has been booked successfully!");
                     }
                 }}>
                     Make Payment

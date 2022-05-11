@@ -1,6 +1,7 @@
 import {Component} from 'react';
 import Home from './Home';
 import Maps from './Maps';
+import Category from "./Category";
 import {  BrowserRouter,  Switch, Route, Link, } from "react-router-dom";
 import Makepayment from './Makepayment';
 import Buytoken from './Buytoken';
@@ -26,7 +27,6 @@ class Main extends Component{
                     <Route path="/purchase">
                         <Buytoken/>
                     </Route>
-                    
 
                     <Route path="/bookride">
                             <Maps/>

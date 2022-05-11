@@ -9,6 +9,7 @@ import { Line } from "react-chartjs-2";
 import { Chart as ChartJS, registerables } from 'chart.js';
 import { Chart } from 'react-chartjs-2'
 import NavBar from "./NavBar";
+import {Link} from "react-router-dom";
 
 ChartJS.register(...registerables);
 
@@ -20,8 +21,11 @@ class Buytoken extends Component{
         this.state = {
           options:"",
           transactions:transactions,
-            data:data
-       
+            data:data,
+            newTo : { 
+                pathname: "/category/595212758daa6810cbba4104", 
+                param1: "Par1" 
+              },
 
         }    
     }
@@ -64,7 +68,6 @@ class Buytoken extends Component{
                 <Col md={4}>
                     <h4>Quick Purchase</h4>
                     <br/>
-                   
                     
                     <Form.Control  style={{height:"40px",marginRight:"20px",width:"80%",display:"inline"}} type="text" placeholder="Enter Amount" />
                     <Button 
