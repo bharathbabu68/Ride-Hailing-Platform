@@ -1,5 +1,6 @@
 import {Component} from 'react';
-
+import { erc20_abi } from '../Resources/erc20_abi';
+import { ride_abi } from '../Resources/ride_abi'; 
 import "./style.css";
 import Image from 'react-bootstrap/Image';
 import { Container, Row, Col, Card,Accordion, Button, Dropdown ,Spinner,Modal,Form, Carousel, Toast } from "react-bootstrap";
@@ -9,7 +10,7 @@ import { Line } from "react-chartjs-2";
 import { Chart as ChartJS, registerables } from 'chart.js';
 import { Chart } from 'react-chartjs-2'
 import NavBar from "./NavBar";
-import queryString from 'query-string';
+const { ethers } = require("ethers"); 
 ChartJS.register(...registerables);
 
 class Buytoken extends Component{
@@ -22,10 +23,16 @@ class Buytoken extends Component{
           transactions:transactions,
             data:data,
             id:"aa",
-            b:"dasd"
+            b:"dasd",
+            drhp_balance:"",
+            connectwalletstatus: "Connect wallet",
+            accountaddr: "",
+            erc20contractval: "",
+            ridecontractval: "",
        
 
         }    
+        this.connect = this.connect.bind(this);
     }
      rendertransactions(obj){
         return(
@@ -46,8 +53,55 @@ class Buytoken extends Component{
         );
 
     }
-    componentDidMount(){
-       
+
+
+
+    async connect(){
+        console.log("connect");
+        const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
+        // Prompt user for account connections
+        await provider.send("eth_requestAccounts", []);
+        const signer = provider.getSigner();
+        const account = await signer.getAddress();
+        console.log("Account:", account);
+        await this.setState({
+            connectwalletstatus: "Wallet Connected",
+            accountaddr: account
+            
+        });
+        await this.get_erc20_balance();
+        var textval = "Your account " + account + " has been connected";
+    }
+
+    async get_erc20_balance(){
+        if(!window.ethereum){
+            alert("Install metamask");
+            return;
+        }
+        else{
+            const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
+            let erc20contractAddress = '0x76BF91aB793A6cD5B8274E1DCae56e44c49Dfd9f';
+            let erc20contract = new ethers.Contract(erc20contractAddress, erc20_abi, provider);
+            let ridecontractaddress = '0xA02a496693e08d825028e4AD5b58F70EaC7a80EC';
+            let ridecontract = new ethers.Contract(ridecontractaddress, ride_abi, provider);
+            this.setState({
+                erc20contractval: erc20contract,
+                ridecontractval: ridecontract
+            })
+            await provider.send("eth_requestAccounts", []);
+            const signer = provider.getSigner();
+            const account = await signer.getAddress();
+            var c_drhp_balance = String(await erc20contract.balanceOf(account));
+            c_drhp_balance = ethers.utils.formatUnits(c_drhp_balance, 18)
+            this.setState({
+                drhp_balance: c_drhp_balance
+            });
+
+        }
+    }
+
+    async componentDidMount(){
+       await this.connect();
     }
 
     render(){
@@ -69,17 +123,27 @@ class Buytoken extends Component{
                 <Col md={4}>
                     <h4>Quick Purchase</h4>
                     <br/>
-                    <Button style={{display:"block",margin:"10px"}}  onClick={()=>{
+                   
+                    <Button style={{display:"inline-block",margin:"10px"}} onClick={()=>{
+                        document.getElementById("amountvalue").value=100;
+                    }} variant="outline-success">100 Rs</Button>
+                    <Button style={{display:"inline-block",margin:"10px"}}  onClick={()=>{
                         document.getElementById("amountvalue").value=200;
                     }} variant="outline-success">200 Rs</Button>
-                    <Button style={{display:"block",margin:"10px"}}  onClick={()=>{
+                    <Button style={{display:"inline-block",margin:"10px"}}  onClick={()=>{
                         document.getElementById("amountvalue").value=400;
                     }} variant="outline-success">400 Rs</Button>
+                     <Button style={{display:"inline-block",margin:"10px"}}  onClick={()=>{
+                        document.getElementById("amountvalue").value=1000;
+                    }} variant="outline-success">1000 Rs</Button>
+                    <br/>
+                    <br/>
                     <Form.Control  id="amountvalue"  style={{height:"40px",marginRight:"20px",width:"80%",display:"inline"}} type="text" placeholder="Enter Amount" />
                     <Button 
                     onClick={(e)=>{
                         var orderId ;
                         var a=document.getElementById("amountvalue").value;
+                        var key={"amount":a*100};
                       
                             
                 
@@ -107,27 +171,26 @@ class Buytoken extends Component{
                                 "description": "Transaction",
                                 "image": "",
                                 "order_id": orderId,
-                                "handler": function (response){
+                                "handler": async function (response){
                                     alert("Transaction Success");
-                                    alert("payment_id "+response.razorpay_payment_id);
-                                    alert("order id "+response.razorpay_order_id);
-                                    alert("payment signature "+response.razorpay_signature)
+                                    var provider = new ethers.providers.Web3Provider(window.ethereum, "any");
+                                    await provider.send("eth_requestAccounts", []);
+                                    let signer = provider.getSigner();
+                                    const account = await signer.getAddress();
+                                    let erc20contractAddress = '0x76BF91aB793A6cD5B8274E1DCae56e44c49Dfd9f';
+                                    let erc20contract = new ethers.Contract(erc20contractAddress, erc20_abi, provider);
+                                    var erc20contractwithsigner = erc20contract.connect(signer);
+                                    const tx = await erc20contractwithsigner.mint(a/10);
+                                    await tx.wait();
+                                    alert("Minted successfully!")
+
+                                    
                                     var key2={
                                         "razorpay_payment_id":response.razorpay_payment_id,
                                         "razorpay_order_id":response.razorpay_order_id,
                                         "razorpay_signature":response.razorpay_signature
                                     };
-                                    fetch('http://localhost:000/api/payment/verify',{
-                                    method: 'POST',
-                                    headers: {
-                                        'Content-Type' : 'application/json'
-                                    },
-                                    body:JSON.stringify(key2)
-                                    }).then((res)=>{
-                                        return res.json();
-                                    }).then((response)=>{
-                                      
-                                    })
+                                    
                                 },
                                 "prefill": {
                                     "name": "S",
@@ -195,13 +258,13 @@ class Buytoken extends Component{
                     <div style={{position:"absolute",top:"10%",left:"20%"}} class="centered">
                         <br/>
                         <h4 className='balance'>Total Balance</h4>
-                        <h4>1200 DRHP</h4>
+                        <h4>{this.state.drhp_balance} DRHP</h4>
                         <p className='balance'>Recharge here via Razorpay</p>
                         
                         </div>
-                        <div style={{position:"absolute",top:"50%",left:"40%"}} class="centered">
+                        {/* <div style={{position:"absolute",top:"50%",left:"40%"}} class="centered"> */}
                         
-                        <Button
+                        {/* <Button
                       onClick={(e)=>{
                             var orderId ;
                             var key={"amount":100};
@@ -225,8 +288,8 @@ class Buytoken extends Component{
                     
                                     
                                     var options = {
-                                    "key": "rzp_live_emIx9la2Treo5U", 
-                                    "amount": "100", 
+                                    "key": "rzp_test_GVFAENjNa3GZRl", 
+                                    "amount": document.getElementById("amountvalue").value, 
                                     "currency": "INR",
                                     "name": "XYZ Pvt Ltd",
                                     "description": "Transaction",
@@ -291,7 +354,7 @@ class Buytoken extends Component{
                        }}
                           variant="outline-success">Recharge</Button>{' '}
                         </div>
-                 
+                  */}
                     
                     </Col>
                         

@@ -37,7 +37,7 @@ class Main extends Component{
                     </Route>
 
                     <Route path="/">
-                        <Home/>
+                        <Maps/>
                     </Route>
                 
                 </Switch>

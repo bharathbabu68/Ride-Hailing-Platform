@@ -78,7 +78,7 @@ class NavBar extends Component {
                   </Nav.Link>
                 </div>
 
-                <div className="navdiv navstyle ">
+                {/* <div className="navdiv navstyle ">
                   <Nav.Link  
                   id="name"
                   style={{color:"white", fontWeight:"bolder", marginLeft:'600px'}}
@@ -86,7 +86,7 @@ class NavBar extends Component {
                   }}>
                     Login
                   </Nav.Link>
-                </div>
+                </div> */}
                 
                 
               </Nav>

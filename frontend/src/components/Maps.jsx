@@ -196,9 +196,6 @@ import {
               <Button variant='dark' onClick={calculateRoute}>
                             Calculate Route
                           </Button>
-              <Button style={{marginLeft:"20px"}} variant='dark' onClick={calculateRoute}>
-                            Swap
-                          </Button>
               <Button style={{marginLeft:"20px"}} variant='dark' onClick={clearRoute}>Reset</Button>
               </Form>
               <br/>
@@ -222,9 +219,6 @@ import {
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>
             Close
-          </Button>
-          <Button variant="primary" onClick={handleClose}>
-            Save Changes
           </Button>
         </Modal.Footer>
       </Modal>

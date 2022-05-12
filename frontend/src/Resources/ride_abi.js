@@ -1,4 +1,4 @@
-export const ride_abi = [
+export const ride_abi =[
 	{
 		"inputs": [
 			{
