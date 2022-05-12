@@ -1,11 +1,10 @@
 import {Component} from 'react';
 import Home from './Home';
 import Maps from './Maps';
-import Category from "./Category";
 import {  BrowserRouter,  Switch, Route, Link, } from "react-router-dom";
-
 import Buytoken from './Buytoken';
 import PaymentPage from './PaymentPage';
+
 class Main extends Component{
 
     constructor(props){
@@ -24,10 +23,6 @@ class Main extends Component{
                         <PaymentPage/>
                     </Route>
 
-
-                    
-            
-                    
                     <Route path="/purchase">
                         <Buytoken/>
                     </Route>
