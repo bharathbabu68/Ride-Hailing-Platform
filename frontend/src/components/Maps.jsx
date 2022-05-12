@@ -39,6 +39,7 @@ import {
     const[origin, setOrigin] = useState('')
     const[destination, setDestination] = useState('')
     const[account, setAccount] = useState('')
+    const[b,setb]=useState(0)
     // modal related stuff
     const [showsearchingdriver, setShowsearchingdriver] = useState(false);
     const handleClose = () => setShowsearchingdriver(false);
@@ -103,11 +104,12 @@ import {
           return res;
       }
   }
-  
+
     async function calculateRoute() {
       if (originRef.current.value === '' || destiantionRef.current.value === '') {
         return
       }
+      
       // eslint-disable-next-line no-undef
       const directionsService = new google.maps.DirectionsService()
       const results = await directionsService.route({
@@ -123,6 +125,7 @@ import {
       setDuration(results.routes[0].legs[0].duration.text)
       setRidecostinr(results.routes[0].legs[0].distance.value/1000*6)
       setRidecostdrhp(results.routes[0].legs[0].distance.value/10000*6)
+      setb(1);
     }
 
     function changeHeight() {
@@ -130,6 +133,7 @@ import {
       }
   
     function clearRoute() {
+      setb(0)
       setDirectionsResponse(null)
       setDistance('')
       setDuration('')
@@ -138,7 +142,27 @@ import {
       originRef.current.value = ''
       destiantionRef.current.value = ''
     }
-  
+    function renderdistance()
+    {
+        if(b==0)
+        {
+          return <div></div>
+        }
+        else{
+          return(
+            <div>
+               <h5 style={{fontFamily:'Roboto', color:"white"}}>Distance: {distance}</h5>
+              <h5 style={{fontFamily:'Roboto', color:"white"}}>Duration: {duration}</h5>
+              <h5 style={{fontFamily:'Roboto', color:"white"}}>Cost (in DRHP tokens): {ridecostdrhp}</h5>
+              <h5 style={{fontFamily:'Roboto', color:"white"}}>Cost (in INR): {ridecostinr}</h5>
+              <br/>
+              <Button variant='dark' onClick={async ()=>{
+                  sign_message()
+              }}>Confirm Ride</Button>
+            </div>
+          );
+        }
+    }
     return (
       <>
       <NavBar/>
@@ -177,7 +201,7 @@ import {
           zIndex='1'
         >
          
-              <div id="ride-box" zIndex='1' style={{height:"450px", width:"30rem",padding: "20px",borderRadius:"15px"}}>
+              <div id="ride-box" zIndex='1' style={{height:"fit-content", width:"30rem",padding: "20px",borderRadius:"15px"}}>
               <h1 style={{fontFamily:'Roboto', color:"white"}}>Book a Ride !</h1>
               <Form>
               <Form.Group className="mb-3">
@@ -199,15 +223,10 @@ import {
               <Button style={{marginLeft:"20px"}} variant='dark' onClick={clearRoute}>Reset</Button>
               </Form>
               <br/>
-              <h5 style={{fontFamily:'Roboto', color:"white"}}>Distance: {distance}</h5>
-              <h5 style={{fontFamily:'Roboto', color:"white"}}>Duration: {duration}</h5>
-              <h5 style={{fontFamily:'Roboto', color:"white"}}>Cost (in DRHP tokens): {ridecostdrhp}</h5>
-              <h5 style={{fontFamily:'Roboto', color:"white"}}>Cost (in INR): {ridecostinr}</h5>
-              <br/>
-              <Button variant='dark' onClick={async ()=>{
-                  sign_message()
-              }}>Confirm Ride</Button>
+              {renderdistance()}
 
+             
+</div>
       <Modal show={showsearchingdriver} onHide={handleClose} centered>
         <Modal.Header closeButton>
           <Modal.Title>Searching for driver <Spinner animation="border" role="status">
@@ -262,7 +281,7 @@ Make Payment
          
         </Modal.Footer>
       </Modal>
-            </div>
+            
         </Box>
       </Flex>
       </>
