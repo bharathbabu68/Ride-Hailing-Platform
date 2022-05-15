@@ -82,7 +82,7 @@ class Buytoken extends Component{
             const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
             let erc20contractAddress = '0x76BF91aB793A6cD5B8274E1DCae56e44c49Dfd9f';
             let erc20contract = new ethers.Contract(erc20contractAddress, erc20_abi, provider);
-            let ridecontractaddress = '0xA02a496693e08d825028e4AD5b58F70EaC7a80EC';
+            let ridecontractaddress = '0x1e836Aa81ec093C0bA977F45bd0720A593aDBF70';
             let ridecontract = new ethers.Contract(ridecontractaddress, ride_abi, provider);
             this.setState({
                 erc20contractval: erc20contract,

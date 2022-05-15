@@ -6,7 +6,7 @@ import { ride_abi } from '../Resources/ride_abi';
 import { Container, Row, Col, Card,Accordion, Button, Dropdown ,Spinner,Modal,Form, Carousel, Toast, Alert } from "react-bootstrap";
 const { ethers } = require("ethers");  
 
-class PaymentPage extends Component{
+class DriverDashboard extends Component{
 
     constructor(props){
         super(props);
@@ -33,6 +33,7 @@ class PaymentPage extends Component{
             parsed_fare:"",
             approve_payment_modal:false,
             pay_to_driver_modal:false,
+            passenger_address: "",
         }
         this.connect = this.connect.bind(this);
         this.rendercomponent = this.rendercomponent.bind(this);
@@ -69,8 +70,9 @@ class PaymentPage extends Component{
                 inr_fare: res.cost*10,
                 drhp_fare: res.cost,
                 parsed_fare: res.cost * 10**18,
-               trip_distance:(res.cost*10)/6,
-               driver_address: res.driver_address,
+                trip_distance:(res.cost*10)/6,
+                driver_address: res.driver_address,
+                passenger_address: res.passenger_address,
                 spinner:0
 
 
@@ -269,4 +271,4 @@ class PaymentPage extends Component{
     }
 }
 
-export default PaymentPage;
+export default DriverDashboard;

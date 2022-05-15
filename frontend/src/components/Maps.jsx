@@ -40,6 +40,7 @@ import {
     const[destination, setDestination] = useState('')
     const[account, setAccount] = useState('')
     const[b,setb]=useState(0)
+    const [connectwalletstatus,setconnectwalletstatus] = useState("Connect wallet");
     // modal related stuff
     const [showsearchingdriver, setShowsearchingdriver] = useState(false);
     const handleClose = () => setShowsearchingdriver(false);
@@ -68,6 +69,21 @@ import {
     if (!isLoaded) {
       return <SkeletonText />
     }
+
+    async function connect(){
+      console.log("connect");
+      const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
+      // Prompt user for account connections
+      await provider.send("eth_requestAccounts", []);
+      const signer = provider.getSigner();
+      const account = await signer.getAddress();
+      console.log("Account:", account);
+      await this.setState({
+          connectwalletstatus: "Wallet Connected",
+          
+      });
+      var textval = "Your account " + account + " has been connected";
+  }
 
     async function sign_message(){
       var message = "Confirm ride request from " + originRef.current.value + " to " + destiantionRef.current.value;
@@ -193,6 +209,7 @@ import {
             )}
           </GoogleMap>
         </Box>
+        {/* <Button style={{position:"relative", top:"10px", right:"0px"}} variant='dark' onClick={clearRoute}>{connectwalletstatus}</Button> */}
         <Box position='absolute' top={30} right={50}
           borderRadius='lg'
           m={4}
@@ -200,7 +217,6 @@ import {
           minW='container.md'
           zIndex='1'
         >
-         
               <div id="ride-box" zIndex='1' style={{height:"fit-content", width:"30rem",padding: "20px",borderRadius:"15px"}}>
               <h1 style={{fontFamily:'Roboto', color:"white"}}>Book a Ride !</h1>
               <Form>
@@ -218,7 +234,7 @@ import {
               <Form.Group className="mb-3" controlId="formBasicCheckbox">
               </Form.Group>
               <Button variant='dark' onClick={calculateRoute}>
-                            Calculate Route
+                            Search
                           </Button>
               <Button style={{marginLeft:"20px"}} variant='dark' onClick={clearRoute}>Reset</Button>
               </Form>
