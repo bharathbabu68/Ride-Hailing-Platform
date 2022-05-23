@@ -62,7 +62,7 @@ class NavBar extends Component {
                   <Nav.Link  
                   id="name"
                   style={{color:"white", fontWeight:"bolder", marginRight:'30px'}}
-                  href="#" className=" navlinks" onClick={()=>{
+                  href="/staking" className=" navlinks" onClick={()=>{
                   }}>
                     Staking
                   </Nav.Link>
