@@ -461,7 +461,6 @@ app.post("/api/payment/verify",(req,res)=>{
    });
 
 
-<<<<<<< Updated upstream
   async function clear_passenger_details(){
     // function to clear the source, destination, passenger_address, cost, status of all drivers
     const uri = "mongodb+srv://Suriyaa:mthaniga@cluster0.rsh4e.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
@@ -484,7 +483,6 @@ app.post("/api/payment/verify",(req,res)=>{
 
 
 // clear_passenger_details();
-=======
 function main()
 {
  const infura= "https://ropsten.infura.io/v3/d628a445ee6c405489c0da8f89a9d58a";
@@ -536,7 +534,6 @@ var details = {
 
 
 //main();
->>>>>>> Stashed changes
 
 
 app.listen(4000,()=>{
