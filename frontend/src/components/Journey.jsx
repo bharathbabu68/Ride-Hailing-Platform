@@ -24,7 +24,7 @@ import {
   const center = { lat: 12.9480, lng: 80.1397 }
   const { ethers } = require("ethers");
 
-  function Maps() {
+  function Journey() {
     const { isLoaded } = useJsApiLoader({
       googleMapsApiKey: "AIzaSyCCQlQuetd7_VFAbfWIy4yD8xjxEoAjmzI",
       libraries: ['places'],
@@ -305,4 +305,4 @@ Make Payment
     )
   }
   
-  export default Maps
+  export default Journey

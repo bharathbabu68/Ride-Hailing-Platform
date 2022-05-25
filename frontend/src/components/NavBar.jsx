@@ -19,10 +19,10 @@ class NavBar extends Component {
           <Container fluid>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             
-              <Navbar.Brand href="/explore" className="navbrandname">
+              <Navbar.Brand href="/" className="navbrandname">
               </Navbar.Brand>
 
-              <Navbar.Brand href="/explore" className="navbrandname">
+              <Navbar.Brand href="/" className="navbrandname">
               <h2 style={{color:"white", fontWeight:'light'}}>RideShare</h2>
               </Navbar.Brand>
             
@@ -35,7 +35,7 @@ class NavBar extends Component {
               <div className="navdiv navstyle ">
                   <Nav.Link 
                   style={{color:"white", fontWeight:"bolder", marginRight:'30px'}}
-                  href="/" className=" navlinks">
+                  href="/home" className=" navlinks">
                     Home
                   </Nav.Link>
                 </div>
@@ -43,7 +43,7 @@ class NavBar extends Component {
                 <div className="navdiv  navstyle ">
                   <Nav.Link 
                   style={{color:"white", fontWeight:"bolder", marginRight:'30px'}}
-                   href="/bookride" className=" navlinks">
+                   href="/ride" className=" navlinks">
                     Book Ride
                   </Nav.Link>
                 </div>

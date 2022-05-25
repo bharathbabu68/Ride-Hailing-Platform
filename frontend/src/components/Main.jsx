@@ -5,6 +5,10 @@ import {  BrowserRouter,  Switch, Route, Link, } from "react-router-dom";
 import Buytoken from './Buytoken';
 import PaymentPage from './PaymentPage';
 import Staketoken from './Staketoken';
+import DriverDashboard from './DriverDashboard';
+import Login from './Login';
+import Journey from './Journey';
+
 class Main extends Component{
 
     constructor(props){
@@ -27,8 +31,8 @@ class Main extends Component{
                         <Buytoken/>
                     </Route>
 
-                    <Route path="/bookride">
-                            <Maps/>
+                    <Route path="/driver">
+                        <DriverDashboard/>
                     </Route>
                     
                     <Route path="/staking">
@@ -36,8 +40,20 @@ class Main extends Component{
                     </Route>
                     
 
-                    <Route path="/">
+                    <Route path="/journey">
+                        <Journey/>
+                    </Route>
+
+                    <Route path="/home">
+                        <Home/>
+                    </Route>
+
+                    <Route path="/ride">
                         <Maps/>
+                    </Route>
+
+                    <Route path="/">
+                        <Login/>
                     </Route>
                 
                 </Switch>
