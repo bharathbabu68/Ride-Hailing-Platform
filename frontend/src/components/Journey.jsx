@@ -18,7 +18,7 @@ import {
     Autocomplete,
     DirectionsRenderer,
   } from '@react-google-maps/api'
-  import { useRef, useState } from 'react'
+  import { useEffect, useRef, useState } from 'react'
   import NavBar from './NavBar'
   
   const center = { lat: 12.9480, lng: 80.1397 }
@@ -29,6 +29,10 @@ import {
       googleMapsApiKey: "AIzaSyCCQlQuetd7_VFAbfWIy4yD8xjxEoAjmzI",
       libraries: ['places'],
     })
+
+    useEffect(() => {
+        
+    });
   
     const [map, setMap] = useState(/** @type google.maps.Map */ (null))
     const [directionsResponse, setDirectionsResponse] = useState(null)
