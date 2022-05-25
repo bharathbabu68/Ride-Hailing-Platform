@@ -33,6 +33,7 @@ class PaymentPage extends Component{
             parsed_fare:"",
             approve_payment_modal:false,
             pay_to_driver_modal:false,
+            approval_processing:false,
         }
         this.connect = this.connect.bind(this);
         this.rendercomponent = this.rendercomponent.bind(this);
@@ -224,11 +225,26 @@ class PaymentPage extends Component{
                         // const parsed_fare = ethers.utils.parseUnits(String(this.state.drhp_fare), 18);
                         // console.log("drhp_fare:", parsed_fare);
                         const tx = await contractwithsigner.approve("0x1e836Aa81ec093C0bA977F45bd0720A593aDBF70", String(this.state.parsed_fare));
-                        await tx.wait();
                         this.setState({approve_payment_modal:false});
+                        this.setState({approval_processing:true});
+                        await tx.wait();
+                        this.setState({approval_processing:false});
                         this.setState({pay_to_driver_modal:true});
 
                         }}>Approve Transfer</Button>
+                    </Modal.Footer>
+                </Modal>
+
+                <Modal centered show={this.state.approval_processing}>
+                        <Modal.Header >
+                        <Modal.Title>Approval Processing <Spinner animation="border" role="status">
+  <span className="visually-hidden">Loading...</span>
+</Spinner></Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                        <p>Your approval payment of {this.state.drhp_fare} DRHP tokens is being processed. Waiting for the transaction to be mined !</p>
+                        </Modal.Body>
+                        <Modal.Footer>
                     </Modal.Footer>
                 </Modal>
 

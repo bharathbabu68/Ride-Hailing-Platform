@@ -33,7 +33,7 @@ class DriverDashboard extends Component{
             parsed_fare:"",
             approve_payment_modal:false,
             pay_to_driver_modal:false,
-            passenger_address: "",
+            approval_processing:false,
         }
         this.connect = this.connect.bind(this);
         this.rendercomponent = this.rendercomponent.bind(this);
@@ -70,9 +70,8 @@ class DriverDashboard extends Component{
                 inr_fare: res.cost*10,
                 drhp_fare: res.cost,
                 parsed_fare: res.cost * 10**18,
-                trip_distance:(res.cost*10)/6,
-                driver_address: res.driver_address,
-                passenger_address: res.passenger_address,
+               trip_distance:(res.cost*10)/6,
+               driver_address: res.driver_address,
                 spinner:0
 
 
@@ -125,82 +124,13 @@ class DriverDashboard extends Component{
         var textval = "Your account " + account + " has been connected";
     }
     rendercomponent(){
-        if(this.state.spinner==1){
             return(
-                <Spinner style={{marginTop:"20%",marginLeft:"50%"}} animation="border"  />
-            )
-        }
-        else{
-            return(
-                <>
-                <Row style={{paddingTop:"2%"}}>
-                <Col md={10}>
-                    </Col>
-                <Col md={2}>
-                <Button style={{marginLeft:"10px"}} variant="dark" onClick={()=>this.connect()}>{this.state.connectwalletstatus}</Button>
-                </Col>
-            </Row>
-            <Container fluid style={{paddingLeft:"5%", paddingRight:"5%", paddingTop:"2%"}}>
-                <Row>
-                <Col md={6} style={{borderRight: "1px solid grey", height:"500px"}}>
-                <h3>You have selected Regular Passenger Cab</h3>
-                <h6>Make Payment in DRHP Tokens to book your ride</h6>
-                <br/>
-                <h5>Your Account Details</h5>
-                <p>Your account: {this.state.accountaddr}</p>
-                <p>Your DRHP token balance: {this.state.drhp_balance} DRHP Tokens</p>
-
-                <br/>
-                <h5>Your Trip Details</h5>
-                <p>Source: {this.state.source}</p>
-                <p>Destination: {this.state.destination}</p>
-                <p>Driver: {this.state.driver_address}</p>
-                <p>Car: {this.state.car_type} - {this.state.car}</p>
-                <p>Car Number: {this.state.car_number}</p>
-
-                </Col>
-                <Col md={6} style={{paddingLeft:"5%", paddingRight:"3%"}}>
-                <h3>Make Payment to confirm your ride!</h3>
-                <h6>Your amount will be transferred to the driver securely once the ride is completed! </h6>
-                <br/>
-                <h5> Fare Details</h5>
-                <p>Fare per km: 6 INR</p>
-                <p>Total km: {this.state.trip_distance.toFixed(2)}</p>
-                <p>Total fare: {this.state.inr_fare.toFixed(2)}</p>
-                <br/>
-                <p> Current Conversion Rate: 1 DRHP = 10 INR</p>
-                <p> Total DRHP Tokens to be Paid: {this.state.drhp_fare} DRHP Tokens</p>
-                <br/>
-            
-
-                <Button variant="dark" style={{width:"100%"}} size="lg" onClick={async ()=>{
-                    if(parseFloat(this.state.drhp_balance) < parseFloat(this.state.drhp_fare)){
-                        alert("Insufficient DRHP Tokens, please purchase some DRHP Tokens and try booking your ride !");
-                    }
-                    else{
-                        // var erc20contract  = this.state.erc20contractval;
-                        // const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
-                        // let signer = provider.getSigner();
-                        // var contractwithsigner = erc20contract.connect(signer);
-                        // // convert drhp fare into wei
-                        // // const parsed_fare = ethers.utils.parseUnits(String(this.state.drhp_fare), 18);
-                        // // console.log("drhp_fare:", parsed_fare);
-                        // const tx = await contractwithsigner.approve("0xAb3c057544765120A030a5A0aA8D0468Ed9FA32a", String(this.state.parsed_fare));
-                        // await tx.wait();
-                        // alert("Your Ride Booked Successfully!");
-                        this.setState({approve_payment_modal:true});
-                    }
-                }}>
-                    Make Payment
-                </Button>
-                </Col>
-                
-            </Row>
-            </Container>
-            </>
+                <>             
+                </>
             );
-        }
     }
+
+    
     render(){
 
         return(
@@ -226,11 +156,26 @@ class DriverDashboard extends Component{
                         // const parsed_fare = ethers.utils.parseUnits(String(this.state.drhp_fare), 18);
                         // console.log("drhp_fare:", parsed_fare);
                         const tx = await contractwithsigner.approve("0x1e836Aa81ec093C0bA977F45bd0720A593aDBF70", String(this.state.parsed_fare));
-                        await tx.wait();
                         this.setState({approve_payment_modal:false});
+                        this.setState({approval_processing:true});
+                        await tx.wait();
+                        this.setState({approval_processing:false});
                         this.setState({pay_to_driver_modal:true});
 
                         }}>Approve Transfer</Button>
+                    </Modal.Footer>
+                </Modal>
+
+                <Modal centered show={this.state.approval_processing}>
+                        <Modal.Header >
+                        <Modal.Title>Approval Processing <Spinner animation="border" role="status">
+  <span className="visually-hidden">Loading...</span>
+</Spinner></Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                        <p>Your approval payment of {this.state.drhp_fare} DRHP tokens is being processed. Waiting for the transaction to be mined !</p>
+                        </Modal.Body>
+                        <Modal.Footer>
                     </Modal.Footer>
                 </Modal>
 
