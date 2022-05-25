@@ -30,6 +30,9 @@ class Staketoken extends Component{
             accountaddr: "",
             erc20contractval: "",
             ridecontractval: "",
+            balance: "",
+            show:false,
+            transactionstate:false
            
         }
         this.timer = 0;
@@ -82,19 +85,26 @@ class Staketoken extends Component{
         }
         else{
             var provider = new ethers.providers.Web3Provider(window.ethereum, "any");
-            let erc20contractAddress = '0xa8Ac3c8B348B796d6A4116b19556c66527632e40';
+            let erc20contractAddress = '0x47685265115B66dA20D84a0ebf1d4E5Eec928d0E';
             let erc20contract = new ethers.Contract(erc20contractAddress, erc20_abi, provider);
            
             this.setState({
                 erc20contractval: erc20contract,
               
             })
+
             // await provider.send("eth_requestAccounts", []);
             // var signer = provider.getSigner();
             // var account = await signer.getAddress();
             var c_drhp_balance = String(await erc20contract.getotalstakes({from: this.state.accountaddr}));
             this.setState({total_value_locked:c_drhp_balance});
 
+             await provider.send("eth_requestAccounts", []);
+            var signer = provider.getSigner();
+            var account = await signer.getAddress();
+            var c_drhp_balance = String(await erc20contract.balanceOf(this.state.accountaddr));
+            this.setState({balance:c_drhp_balance});
+            console.log("balance",c_drhp_balance);
           
             var s = String(await erc20contract.gettotalreward());
             console.log("total rewards",s);
@@ -219,7 +229,52 @@ class Staketoken extends Component{
             <>  
 
             <NavBar/>
-           
+            <Modal show={this.state.show} onHide={()=>{
+                this.setState({show:false});
+                }}>
+        <Modal.Header closeButton>
+          <Modal.Title>Get Ready to Stake</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+        <p>Balance :{this.state.balance}</p>
+        <Form.Label>Enter amount in DRHP</Form.Label>
+        <Form.Control id="t1" type="text" />
+        <Button onClick={async()=>{
+            var a=document.getElementById("t1").value;
+            var erc20contract  = this.state.erc20contractval;
+            const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
+            let signer = provider.getSigner();
+            console.log(signer);
+            var contractwithsigner = erc20contract.connect(signer);
+          
+            const tx = await contractwithsigner.depositstake(a);
+            this.setState({transactionstate:true});
+            await tx.wait();
+            this.setState({transactionstate:false});
+            
+            console.log("Printing transaction",tx);
+
+        }} className="mt-5" variant="secondary">Deposit</Button>
+        </Modal.Body>
+        <Modal.Footer>
+          
+        </Modal.Footer>
+      </Modal>
+
+      <Modal show={this.state.transactionstate} onHide={()=>{
+                this.setState({transactionstate:false});
+                }}>
+        <Modal.Header closeButton>
+          <Modal.Title>Transaction in progress</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+            <Spinner style={{marginLeft:"40%"}} animation="border" role="status"></Spinner>
+        </Modal.Body>
+        <Modal.Footer>
+          
+        </Modal.Footer>
+      </Modal>
+        
             <Container className="mt-5">
                 <Row>
                     <Col md={4}>
@@ -311,10 +366,27 @@ class Staketoken extends Component{
                     </Row>
                 <div className='mt-5 mb-3' style={{paddingLeft:"25%"}}>
                     
-                <Button variant="success" style={{marginRight:"30px"}}>Deposit</Button>
+                <Button onClick={()=>{
+                    this.setState({show:true});
+                }} variant="success" style={{marginRight:"30px"}}>Deposit</Button>
                
   <Button style={{marginRight:"30px"}} variant="outline-secondary">Withdraw</Button>
-                <Button variant="dark">Harvest</Button>
+                <Button  onClick={async (e)=>{
+     
+     var erc20contract  = this.state.erc20contractval;
+     const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
+     let signer = provider.getSigner();
+     console.log(signer);
+     var contractwithsigner = erc20contract.connect(signer);
+   
+     const tx = await contractwithsigner.claim_reward();
+     this.setState({transactionstate:true});
+     await tx.wait();
+     this.setState({transactionstate:false});
+     
+      console.log("Reward claimed");
+
+}} variant="dark">Harvest</Button>
                 </div>
                 </div>
                
