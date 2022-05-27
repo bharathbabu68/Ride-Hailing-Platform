@@ -32,7 +32,8 @@ class Staketoken extends Component{
             ridecontractval: "",
             balance: "",
             show:false,
-            transactionstate:false
+            transactionstate:false,
+            removestakemodal:false
            
         }
         this.timer = 0;
@@ -261,6 +262,40 @@ class Staketoken extends Component{
         </Modal.Footer>
       </Modal>
 
+      <Modal show={this.state.removestakemodal} onHide={()=>{
+                this.setState({removestakemodal:false});
+                }}>
+        <Modal.Header closeButton>
+          <Modal.Title>We hope you would return back to stake</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+        <p>Balance :{this.state.balance}</p>
+        <Form.Label>Enter amount in DRHP</Form.Label>
+        <Form.Control id="t2" type="text" />
+        <Button onClick={async()=>{
+            var a=document.getElementById("t2").value;
+            var erc20contract  = this.state.erc20contractval;
+            const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
+            let signer = provider.getSigner();
+            console.log(signer);
+            var contractwithsigner = erc20contract.connect(signer);
+          
+            const tx = await contractwithsigner.removestake(a);
+            this.setState({transactionstate:true});
+            this.setState({removestakemodal:false});
+            await tx.wait();
+            this.setState({transactionstate:false});
+          
+            
+            
+
+        }} className="mt-5" variant="secondary">Withdraw Stake</Button>
+        </Modal.Body>
+      
+      </Modal>
+
+
+
       <Modal show={this.state.transactionstate} onHide={()=>{
                 this.setState({transactionstate:false});
                 }}>
@@ -370,7 +405,11 @@ class Staketoken extends Component{
                     this.setState({show:true});
                 }} variant="success" style={{marginRight:"30px"}}>Deposit</Button>
                
-  <Button style={{marginRight:"30px"}} variant="outline-secondary">Withdraw</Button>
+  <Button onClick={()=>{
+      this.setState({removestakemodal:true});
+
+  }} style={{marginRight:"30px"}} variant="outline-secondary">Remove stake</Button>
+
                 <Button  onClick={async (e)=>{
      
      var erc20contract  = this.state.erc20contractval;
