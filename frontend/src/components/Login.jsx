@@ -177,7 +177,7 @@ class Login extends Component{
             /> */}
             <Row>
                 <Col md={6} style={{padding:"40px", marginTop:"20px", color:"white", height:"600px"}}>
-                    <div style={{backgroundColor:"black", padding:"20px", borderRadius:"20px"}} >
+                    <div style={{backgroundColor:"black", padding:"10%", borderRadius:"20px"}} >
                     <h1 
                     style={{fontSize:'400%', fontWeight:'bolder'}}>Easy. Efficient. Secure.</h1> 
                     <br/>
@@ -191,7 +191,7 @@ class Login extends Component{
                     </div>
                 </Col>
                 <Col md={6} style={{backgroundColor:"", marginTop:"20px", padding:"40px", height:"600px"}}>
-                    <div style={{backgroundColor:"black", padding:"50px", borderRadius:"20px", textAlign:"center", height:"475px"}} >
+                    <div style={{backgroundColor:"black", padding:"16% 10% 17% 8%", borderRadius:"20px", textAlign:"center", height:"fit-content"}} >
                     <h1 
                     style={{color:"yellow", fontSize:'200%', fontWeight:'bolder'}}>Login to start riding!</h1> 
                     <br/>

@@ -97,7 +97,7 @@ app.post("/getridedetails", async function(req, res) {
    
     var obj={"driver_details":arr};
 
-   
+   console.log(obj)
 
     res.send(obj);
 

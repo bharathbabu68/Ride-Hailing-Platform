@@ -7,6 +7,7 @@ import PaymentPage from './PaymentPage';
 import Staketoken from './Staketoken';
 import DriverDashboard from './DriverDashboard';
 import Login from './Login';
+
 import Journey from './Journey';
 
 class Main extends Component{
@@ -54,7 +55,7 @@ class Main extends Component{
 
                     <Route path="/">
                         <Login/>
-                    </Route>
+                    </Route> 
                 
                 </Switch>
                 </BrowserRouter>
