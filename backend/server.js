@@ -16,6 +16,9 @@ const EthereumTx = require('ethereumjs-tx')
 
 var instance = new Razorpay({ key_id: 'rzp_test_GVFAENjNa3GZRl', key_secret: 'I5TAm2SlyllYMzzQkaPIBPrG' })
 
+// fetch all previous ride data of a driver from the rides_table
+
+
 
 
 app.post("/payment", async function(req, res) {
@@ -34,12 +37,30 @@ app.post("/payment", async function(req, res) {
         break;
       }
     }
+    // calculate current date and time
+    var today = new Date();
+    var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+    var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+    var dateTime = date+' '+time;
+
+    await client.db("Ride_Hailing_Platform").collection("drivers_table").updateOne({_id:driver_id},{$set:{time:dateTime}});
      await client.db("Ride_Hailing_Platform").collection("drivers_table").updateOne({_id:driver_id},{$set:{status:1}});
     await client.db("Ride_Hailing_Platform").collection("drivers_table").updateOne({_id:driver_id},{$set:{source:req.body.source}});
     await client.db("Ride_Hailing_Platform").collection("drivers_table").updateOne({_id:driver_id},{$set:{destination:req.body.destination}});
     await client.db("Ride_Hailing_Platform").collection("drivers_table").updateOne({_id:driver_id},{$set:{cost:req.body.ridecostdrhp}});
     await client.db("Ride_Hailing_Platform").collection("drivers_table").updateOne({_id:driver_id},{$set:{passenger_address:req.body.user_address}});
 
+    // store all the ride data in rides table
+    await client.db("Ride_Hailing_Platform").collection("rides_table").insertOne({
+      driver_id:driver_id,
+      source:req.body.source,
+      destination:req.body.destination,
+      cost:req.body.ridecostdrhp,
+      passenger_address:req.body.user_address,
+      time:dateTime,
+      status:0,
+      payment_status:0
+    });
 
    
     var obj={"driver_details":"123"};
@@ -182,6 +203,7 @@ app.post("/api/payment/verify",(req,res)=>{
 
 
 // clear_passenger_details();
+
 function main()
 {
  const infura= "https://ropsten.infura.io/v3/d628a445ee6c405489c0da8f89a9d58a";

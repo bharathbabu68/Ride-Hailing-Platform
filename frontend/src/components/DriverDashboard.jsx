@@ -28,59 +28,80 @@ class DriverDashboard extends Component{
             drhp_fare: "",
             erc20contractval: "",
             ridecontractval: "",
+            passenger_address: "",
             showAlert: false,
             spinner:1,
             parsed_fare:"",
             approve_payment_modal:false,
             pay_to_driver_modal:false,
             approval_processing:false,
+            show_active_ride:false,
+            driver_valid:"",
         }
         this.connect = this.connect.bind(this);
-        this.rendercomponent = this.rendercomponent.bind(this);
 
     }
+    
+
     async componentDidMount(){
 
        await this.connect();
+
+       var ridecontractval = this.state.ridecontractval;
+
+       var  driver_valid_or_not = String(await ridecontractval.is_driver_valid({from: this.state.accountaddr}));
+
+       this.setState({driver_valid: driver_valid_or_not});
+
+       if(window.ethereum) {
+        window.ethereum.on('accountsChanged', async () => {
+            await this.connect();
+            console.log("Account changed");
+            var  driver_valid_or_not = String(await ridecontractval.is_driver_valid({from: this.state.accountaddr}));
+
+            this.setState({driver_valid: driver_valid_or_not});
+        });
+    }
+
+       if(this.state.driver_valid=="true"){
         
-        var key={user_address:this.state.accountaddr};
-        console.log("address",this.state.accountaddr);
-        fetch('http://localhost:4000/getridedetails',{
-            method: 'POST',
-            headers: {
-                'Content-Type' : 'application/json'
-            },
-            body:JSON.stringify(key)
-        }).then((res)=>{
-            if(res.ok)
-            return res.json();
-        }).then(async(res)=>{
-          // redirect to payment page
-            console.log(res["driver_details"][0]);
-            res=res["driver_details"][0];
-            await this.setState({
-                
-                source: res.source,
-                destination: res.destination,
-
-               
-                car: res.car,
-                car_number: res.car_no,
-               
-                inr_fare: res.cost*10,
-                drhp_fare: res.cost,
-                parsed_fare: res.cost * 10**18,
-               trip_distance:(res.cost*10)/6,
-               driver_address: res.driver_address,
-                spinner:0
-
-
-            });
-            console.log("Printing parsed fare");
-            console.log(this.state.parsed_fare);
-
-            
-        })
+            var key={user_address:this.state.accountaddr};
+            console.log("address",this.state.accountaddr);
+            fetch('http://localhost:4000/getdriverdetails',{
+                method: 'POST',
+                headers: {
+                    'Content-Type' : 'application/json'
+                },
+                body:JSON.stringify(key)
+            }).then((res)=>{
+                if(res.ok)
+                return res.json();
+            }).then(async(res)=>{
+            // redirect to payment page
+                console.log(res["driver_details"][0]);
+                res=res["driver_details"][0];
+                console.log(res);
+                await this.setState({
+                    
+                    source: res.source,
+                    destination: res.destination,
+                    car: res.car,
+                    car_number: res.car_no,
+                    inr_fare: res.cost*10,
+                    drhp_fare: res.cost,
+                    parsed_fare: res.cost * 10**18,
+                    trip_distance:(res.cost*10)/6,
+                    driver_address: res.driver_address,
+                    passenger_address: res.passenger_address,
+                    spinner:0
+                });            
+          })
+        }
+        else{
+            console.log("Driver not registered");
+            console.log("Driver status ", driver_valid_or_not);
+            this.setState({spinner:0});
+        }
     }
 
     async get_erc20_balance(){
@@ -123,26 +144,145 @@ class DriverDashboard extends Component{
         await this.get_erc20_balance();
         var textval = "Your account " + account + " has been connected";
     }
-    rendercomponent(){
-            return(
-                <>             
-                </>
-            );
+
+    renderwalletdetails(){
+        return(
+            <>
+            <Row>
+                <Col>
+                       <Card bg='light' key='light' text='dark'>
+                           <Card.Header>
+                               <h5>Your Wallet</h5>
+                           </Card.Header>
+                           <Card.Body>
+                               <Card.Text>
+                                   <h6>Connected Wallet Address: {this.state.accountaddr}</h6>
+                                   <h6>Your DRHP Balance: {this.state.drhp_balance}</h6>
+                               </Card.Text>
+                           </Card.Body>
+                       </Card>
+                   </Col>
+                   
+            </Row>
+            </>
+        );
     }
 
-    
-    render(){
+    renderactiveride(){
+        if(this.state.show_active_ride==true){
+        return(
+            <>
+                <h4 style={{marginTop:"20px"}}>Active Ride (Ongoing)</h4>
+                <hr/>
+                <Row>
+                        <Col>
+                            <Card bg='light' key='light' text='dark'>
+                                <Card.Header>
+                                    <h6>Passenger {this.state.passenger_address}</h6>
+                                </Card.Header>
+                                <Card.Body>
+                                    <Card.Text>
+                                        <h6>Source: {this.state.source}</h6>
+                                        <h6>Destination: {this.state.destination}</h6>
+                                        <h6>Car: {this.state.car}</h6>
+                                        <h6>Car Number: {this.state.car_number}</h6>
+                                        <h6>Trip Distance: {this.state.trip_distance}</h6>
+                                        <h6>Inr Fare: {this.state.inr_fare}</h6>
+                                        <h6>Drhp Fare: {this.state.drhp_fare}</h6>
+                                    </Card.Text>
+                                </Card.Body>
+                            </Card>
+                        </Col>
+                        
+                    </Row>
+            </>
+        )
+        }
+        else{
+            return(
+                <>
+                    <h4 style={{marginTop:"20px"}}>Active Ride (Ongoing)</h4>
+                    <hr/>
+                    <p>No active rides currently</p>
+                </>
+            )
+        }
+    }
+
+    renderriderequest(){
+        return(
+            <>
+             <h4 style={{marginTop:"20px"}}>Ride Requests (Yet to be approved by you) </h4>
+                    <hr/>
+                    <Row>
+                         <Col>
+                                <Card bg='light' key='light' text='dark'>
+                                    <Card.Header>
+                                        <h6>Passenger {this.state.passenger_address}</h6>
+                                    </Card.Header>
+                                    <Card.Body>
+                                        <Card.Text>
+                                            <h6>Source: {this.state.source}</h6>
+                                            <h6>Destination: {this.state.destination}</h6>
+                                            <h6>Car: {this.state.car}</h6>
+                                            <h6>Car Number: {this.state.car_number}</h6>
+                                            <h6>Trip Distance: {this.state.trip_distance}</h6>
+                                            <h6>Inr Fare: {this.state.inr_fare}</h6>
+                                            <h6>Drhp Fare: {this.state.drhp_fare}</h6>
+                                        </Card.Text>
+                                        <br/>
+                                        <Button variant="dark">Accept Ride Request!</Button>
+                                    </Card.Body>
+                                </Card>
+                            </Col>
+                            
+                     </Row>
+            </>
+        )
+    }
+
+    renderpastrides(){
+        return(
+            <>
+            <h4 style={{marginTop:"20px"}}>Past Rides</h4>
+                    <hr/>
+                    <Row>
+                         <Col>
+                                <Card bg='light' key='light' text='dark'>
+                                    <Card.Header>
+                                    <h6>Passenger {this.state.passenger_address}</h6>
+                                    </Card.Header>
+                                    <Card.Body>
+                                        <Card.Text>
+                                            <h6>Passenger Address: {this.state.passenger_address}</h6>
+                                            <h6>Source: {this.state.source}</h6>
+                                            <h6>Destination: {this.state.destination}</h6>
+                                            <h6>Car: {this.state.car}</h6>
+                                            <h6>Car Number: {this.state.car_number}</h6>
+                                            <h6>Trip Distance: {this.state.trip_distance}</h6>
+                                            <h6>Inr Fare: {this.state.inr_fare}</h6>
+                                            <h6>Drhp Fare: {this.state.drhp_fare}</h6>
+                                        </Card.Text>
+                                    </Card.Body>
+                                </Card>
+                            </Col>
+                            
+                     </Row>
+            </>
+        )
+    }
+
+
+    rendermodals(){
 
         return(
-            <>  
-
-            <NavBar/>
-            <Modal centered show={this.state.approve_payment_modal}>
+        <>
+        <Modal centered show={this.state.approve_payment_modal}>
                         <Modal.Header >
-                        <Modal.Title>Approve payment</Modal.Title>
+                        <Modal.Title>Make payment</Modal.Title>
                         </Modal.Header>
                         <Modal.Body>
-                        <p>Approve payment of {this.state.drhp_fare} DRHP tokens to process your payment. </p>
+                        <p>Make payment of 100 DRHP tokens as a one-time-fee for driver registration ! </p>
                         <p> Your available token balance: {this.state.drhp_balance} tokens</p>
                         </Modal.Body>
                         <Modal.Footer>
@@ -155,25 +295,31 @@ class DriverDashboard extends Component{
                         // convert drhp fare into wei
                         // const parsed_fare = ethers.utils.parseUnits(String(this.state.drhp_fare), 18);
                         // console.log("drhp_fare:", parsed_fare);
-                        const tx = await contractwithsigner.approve("0x1e836Aa81ec093C0bA977F45bd0720A593aDBF70", String(this.state.parsed_fare));
+                        const tx = await contractwithsigner.approve("0x1e836Aa81ec093C0bA977F45bd0720A593aDBF70", "100000000000000000000");
                         this.setState({approve_payment_modal:false});
                         this.setState({approval_processing:true});
                         await tx.wait();
+                        var ridecontract  = this.state.ridecontractval;
+                        const provider2 = new ethers.providers.Web3Provider(window.ethereum, "any");
+                        let signer2 = provider2.getSigner();
+                        console.log(signer2);
+                        var contractwithsigner2 = ridecontract.connect(signer2);
+                        const tx2 = await contractwithsigner2.register_as_driver();
+                        await tx2.wait();
                         this.setState({approval_processing:false});
-                        this.setState({pay_to_driver_modal:true});
 
-                        }}>Approve Transfer</Button>
+                        }}>Make payment</Button>
                     </Modal.Footer>
                 </Modal>
 
                 <Modal centered show={this.state.approval_processing}>
                         <Modal.Header >
-                        <Modal.Title>Approval Processing <Spinner animation="border" role="status">
+                        <Modal.Title>Payment Processing <Spinner animation="border" role="status">
   <span className="visually-hidden">Loading...</span>
 </Spinner></Modal.Title>
                         </Modal.Header>
                         <Modal.Body>
-                        <p>Your approval payment of {this.state.drhp_fare} DRHP tokens is being processed. Waiting for the transaction to be mined !</p>
+                        <p>Your payment of 100 DRHP tokens for one-time driver registartion is being processed. Click confirm on the metamask popups!</p>
                         </Modal.Body>
                         <Modal.Footer>
                     </Modal.Footer>
@@ -205,14 +351,91 @@ class DriverDashboard extends Component{
                         }}>Make Payment</Button>
                     </Modal.Footer>
                 </Modal>
-
-                
-          {this.rendercomponent()}
-            
-                
-            
-            </>
+        </>
         );
+
+    }
+    
+    render(){
+        if(this.state.spinner==1){
+            return(
+                <Spinner style={{marginTop:"20%",marginLeft:"50%"}} animation="border"  />
+            )
+        }
+        else{
+            if(this.state.driver_valid=="true"){
+                return(
+                    <>  
+
+                <NavBar/>
+
+                <Container style={{padding: "20px"}} fluid>
+
+                <h3>Driver Dashboard</h3>
+                <hr/>
+                    
+                {this.renderwalletdetails()}
+
+                {this.renderactiveride()}     
+
+                {this.renderriderequest()}         
+                        
+                {this.renderpastrides()}
+                    
+                </Container>
+                    
+                    </>
+                );
+            }
+            else{
+                return(
+                    <>
+                    {this.rendermodals()}
+                    <NavBar/>
+                    <Container style={{padding: "20px"}} fluid>
+                    <Row>
+                        <Col md={10}>
+                        <h1 style={{fontFamily:"Roboto"}}>Register as a driver !</h1>
+                        </Col>
+                        <Col md={2}>
+                        <Button variant="dark">{this.state.connectwalletstatus}</Button>
+                        </Col>
+                    </Row>
+                    <hr/>
+                    {this.renderwalletdetails()}
+                    <br/>
+                    <hr/>
+                    <h4>Fill up this quick form and deposit the one-time-fee to get registered as a driver !</h4>
+                    <h6>Current on-time-fee: 100 tokens</h6>
+                    <br/>
+                    <Form>
+                    <Form.Group className="mb-3" controlId="formBasicName">
+                        <Form.Label>Name</Form.Label>
+                        <Form.Control type="text" placeholder="Enter Name" />
+                    </Form.Group>
+
+                    <Form.Group className="mb-3" controlId="formBasicCar">
+                        <Form.Label>Enter car model</Form.Label>
+                        <Form.Control type="text" placeholder="Enter Car Model" />
+                    </Form.Group>
+
+                    <Form.Group className="mb-3" controlId="formBasicCarNum">
+                        <Form.Label>Enter car number</Form.Label>
+                        <Form.Control type="text" placeholder="Enter Car Number" />
+                    </Form.Group>
+
+                    <br/>
+                    <Button variant="dark" onClick={()=>{
+                        this.setState({approve_payment_modal:true});
+                    }}>
+                        Register
+                    </Button>
+                    </Form>
+                    </Container>
+                    </>
+                )
+            }
+        }
     }
 }
 

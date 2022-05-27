@@ -104,6 +104,7 @@ class Login extends Component{
             var res = {"message":message, "signature":signature, "account":account};
             if(account == recovered){
               console.log("Signature verified");
+              window.location = '/driver';
             }
             else{
               console.log("Signature not verified");
