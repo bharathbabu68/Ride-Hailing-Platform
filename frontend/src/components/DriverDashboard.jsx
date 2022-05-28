@@ -36,8 +36,8 @@ class DriverDashboard extends Component{
             approve_payment_modal:false,
             pay_to_driver_modal:false,
             approval_processing:false,
-            show_active_ride:false,
             driver_valid:"",
+            driver_status:"",
         }
         this.connect = this.connect.bind(this);
 
@@ -95,8 +95,10 @@ class DriverDashboard extends Component{
                     trip_distance:(res.cost*10)/6,
                     driver_address: res.driver_address,
                     passenger_address: res.passenger_address,
-                    spinner:0
+                    spinner:0,
+                    driver_status:res.status,
                 });            
+                console.log("Status of driver is", res.status);
           })
         }
         else{
@@ -171,7 +173,7 @@ class DriverDashboard extends Component{
     }
 
     renderactiveride(){
-        if(this.state.show_active_ride==true){
+        if(this.state.driver_status==2){
         return(
             <>
                 <h4 style={{marginTop:"20px"}}>Active Ride (Ongoing)</h4>
@@ -212,35 +214,56 @@ class DriverDashboard extends Component{
     }
 
     renderriderequest(){
-        return(
-            <>
-             <h4 style={{marginTop:"20px"}}>Ride Requests (Yet to be approved by you) </h4>
+        if(this.state.driver_status==1){
+            return(
+                <>
+                <h4 style={{marginTop:"20px"}}>Ride Requests (Yet to be approved by you) </h4>
+                        <hr/>
+                        <Row>
+                            <Col>
+                                    <Card style={{width:"20rem"}} bg='light' key='light' text='dark'>
+                                        <Card.Header>
+                                            <h6>Passenger {this.state.passenger_address}</h6>
+                                        </Card.Header>
+                                        <Card.Body>
+                                            <Card.Text>
+                                                <h6>Source: {this.state.source}</h6>
+                                                <h6>Destination: {this.state.destination}</h6>
+                                                <h6>Car: {this.state.car}</h6>
+                                                <h6>Car Number: {this.state.car_number}</h6>
+                                                <h6>Trip Distance: {this.state.trip_distance}</h6>
+                                                <h6>Inr Fare: {this.state.inr_fare}</h6>
+                                                <h6>Drhp Fare: {this.state.drhp_fare}</h6>
+                                            </Card.Text>
+                                            <br/>
+                                            <Button variant="dark" onClick={async ()=>{
+                                                // Change status of driver to '2' in the database
+        
+                                                var ridecontract  = this.state.ridecontractval;
+                                                const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
+                                                let signer = provider.getSigner();
+                                                var contractwithsigner = ridecontract.connect(signer);
+                                                var parsed_fare = ethers.utils.parseUnits(String(this.state.drhp_fare), 18);
+                                                const tx = await contractwithsigner.allocate_driver_to_passenger(this.state.passenger_address, String(parsed_fare));
+                                                await tx.wait();
+                                            }}>Accept Ride Request! </Button>
+                                        </Card.Body>
+                                    </Card>
+                                </Col>
+                                
+                        </Row>
+                </>
+            )
+        }
+        else{
+            return(
+                <>
+                    <h4 style={{marginTop:"20px"}}>Ride Requests (Yet to be approved by you) </h4>
                     <hr/>
-                    <Row>
-                         <Col>
-                                <Card style={{width:"20rem"}} bg='light' key='light' text='dark'>
-                                    <Card.Header>
-                                        <h6>Passenger {this.state.passenger_address}</h6>
-                                    </Card.Header>
-                                    <Card.Body>
-                                        <Card.Text>
-                                            <h6>Source: {this.state.source}</h6>
-                                            <h6>Destination: {this.state.destination}</h6>
-                                            <h6>Car: {this.state.car}</h6>
-                                            <h6>Car Number: {this.state.car_number}</h6>
-                                            <h6>Trip Distance: {this.state.trip_distance}</h6>
-                                            <h6>Inr Fare: {this.state.inr_fare}</h6>
-                                            <h6>Drhp Fare: {this.state.drhp_fare}</h6>
-                                        </Card.Text>
-                                        <br/>
-                                        <Button variant="dark">Accept Ride Request!</Button>
-                                    </Card.Body>
-                                </Card>
-                            </Col>
-                            
-                     </Row>
-            </>
-        )
+                    <p>No ride requests currently</p>
+                </>
+            )
+        }
     }
 
     renderpastrides(){

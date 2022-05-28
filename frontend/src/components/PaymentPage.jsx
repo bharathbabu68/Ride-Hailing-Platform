@@ -223,9 +223,9 @@ class PaymentPage extends Component{
                         console.log(signer);
                         var contractwithsigner = erc20contract.connect(signer);
                         // convert drhp fare into wei
-                        // const parsed_fare = ethers.utils.parseUnits(String(this.state.drhp_fare), 18);
-                        // console.log("drhp_fare:", parsed_fare);
-                        const tx = await contractwithsigner.approve(addresses["ridebooking_contract_address"], String(this.state.parsed_fare));
+                        var parsed_fare = ethers.utils.parseUnits(String(this.state.drhp_fare), 18);
+                        console.log("drhp_fare:", parsed_fare);
+                        const tx = await contractwithsigner.approve(addresses["ridebooking_contract_address"], String(parsed_fare));
                         this.setState({approve_payment_modal:false});
                         this.setState({approval_processing:true});
                         await tx.wait();
