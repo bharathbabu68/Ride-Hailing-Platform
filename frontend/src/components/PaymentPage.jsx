@@ -185,7 +185,7 @@ class PaymentPage extends Component{
                         // // convert drhp fare into wei
                         // // const parsed_fare = ethers.utils.parseUnits(String(this.state.drhp_fare), 18);
                         // // console.log("drhp_fare:", parsed_fare);
-                        // const tx = await contractwithsigner.approve("0xAb3c057544765120A030a5A0aA8D0468Ed9FA32a", String(this.state.parsed_fare));
+                        // const tx = await contractwithsigner.approve(addresses["ridebooking_contract_address"], String(this.state.parsed_fare));
                         // await tx.wait();
                         // alert("Your Ride Booked Successfully!");
                         this.setState({approve_payment_modal:true});
@@ -225,7 +225,7 @@ class PaymentPage extends Component{
                         // convert drhp fare into wei
                         // const parsed_fare = ethers.utils.parseUnits(String(this.state.drhp_fare), 18);
                         // console.log("drhp_fare:", parsed_fare);
-                        const tx = await contractwithsigner.approve("0x1e836Aa81ec093C0bA977F45bd0720A593aDBF70", String(this.state.parsed_fare));
+                        const tx = await contractwithsigner.approve(addresses["ridebooking_contract_address"], String(this.state.parsed_fare));
                         this.setState({approve_payment_modal:false});
                         this.setState({approval_processing:true});
                         await tx.wait();
