@@ -3,6 +3,7 @@ import NavBar from './NavBar';
 import Image from 'react-bootstrap/Image';
 import { erc20_abi } from '../Resources/erc20_abi';
 import { ride_abi } from '../Resources/ride_abi'; 
+import addresses from './address';
 import { Container, Row, Col, Card,Accordion, Button, Dropdown ,Spinner,Modal,Form, Carousel, Toast, Alert } from "react-bootstrap";
 const { ethers } = require("ethers");  
 
@@ -90,9 +91,9 @@ class PaymentPage extends Component{
         }
         else{
             const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
-            let erc20contractAddress = '0x76BF91aB793A6cD5B8274E1DCae56e44c49Dfd9f';
+            let erc20contractAddress = addresses["DRHP_contract_address"];
             let erc20contract = new ethers.Contract(erc20contractAddress, erc20_abi, provider);
-            let ridecontractaddress = '0x1e836Aa81ec093C0bA977F45bd0720A593aDBF70';
+            let ridecontractaddress = addresses["ridebooking_contract_address"]
             let ridecontract = new ethers.Contract(ridecontractaddress, ride_abi, provider);
             this.setState({
                 erc20contractval: erc20contract,
