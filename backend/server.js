@@ -51,16 +51,7 @@ app.post("/payment", async function(req, res) {
     await client.db("Ride_Hailing_Platform").collection("drivers_table").updateOne({_id:driver_id},{$set:{passenger_address:req.body.user_address}});
 
     // store all the ride data in rides table
-    await client.db("Ride_Hailing_Platform").collection("rides_table").insertOne({
-      driver_id:driver_id,
-      source:req.body.source,
-      destination:req.body.destination,
-      cost:req.body.ridecostdrhp,
-      passenger_address:req.body.user_address,
-      time:dateTime,
-      status:0,
-      payment_status:0
-    });
+ 
 
    
     var obj={"driver_details":"123"};
@@ -141,6 +132,106 @@ app.post("/getdriverdetails", async function(req, res) {
 
 
 
+app.post("/getdriverpastrides", async function(req, res) {
+	const uri = "mongodb+srv://Suriyaa:mthaniga@cluster0.rsh4e.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
+	console.log(req.body);
+	const client = new MongoClient(uri);
+	try {
+	  await client.connect();
+	  var driver_address=req.body.driver_address;
+	  // fetch all rides from db whose driver_address is driver_address
+	  const cursor = await client.db("Ride_Hailing_Platform").collection("rides_table").find({driver_address:driver_address});
+	  const arr= await cursor.toArray();
+	  var obj={"driver rides":arr};
+	  res.send(obj);
+	  
+  
+  } catch (e) {
+	  console.error(e);
+  } finally {
+	  // Close the connection to the MongoDB cluster
+	  await client.close();
+  
+  }
+  
+  });
+
+
+  app.post("/checkride", async function(req, res) {
+	const uri = "mongodb+srv://Suriyaa:mthaniga@cluster0.rsh4e.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
+	console.log(req.body);
+	const client = new MongoClient(uri);
+	try {
+	  await client.connect();
+	  var passenger_address=req.body.passenger_address;
+	  // fetch all rides from db whose passenger_address is passenger_address
+	  const cursor = await client.db("Ride_Hailing_Platform").collection("drivers_table").find({passenger_address:passenger_address});
+	  const arr= await cursor.toArray();
+	  console.log(arr);
+	  var obj={};
+	  if(arr.length!=0){
+		  if(arr[0].status==1){
+			  obj={"check":1};
+		  }
+		  else{
+			  obj={"check":2};
+		  }
+	  }
+	  else
+	  {
+		  obj={"check":0};
+	  }
+	  res.send(obj);
+  
+  } catch (e) {
+	  console.error(e);
+  } finally {
+	  // Close the connection to the MongoDB cluster
+	  await client.close();
+  
+  }
+  
+  });
+  
+  
+
+
+
+app.post("/startride", async function(req, res) {
+	const uri = "mongodb+srv://Suriyaa:mthaniga@cluster0.rsh4e.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
+	console.log(req.body);
+	const client = new MongoClient(uri);
+	try {
+	  await client.connect();
+	  var driver_adress=req.body.driver_address;
+	// update driver status to 2 with driver address as driver_address
+	  await client.db("Ride_Hailing_Platform").collection("drivers_table").updateOne({driver_address:driver_adress},{$set:{status:2}});
+	  // fetch driver from db whose driver_address is driver_address
+	  const cursor = await client.db("Ride_Hailing_Platform").collection("drivers_table").find({driver_address:driver_adress});
+	  const arr= await cursor.toArray();
+
+	  await client.db("Ride_Hailing_Platform").collection("rides_table").insertOne({
+		driver_address:driver_adress,
+		source:arr['source'],
+		destination:arr['destination'],
+		cost:arr['cost'],
+		passenger_address:arr['passenger_address'],
+		status:2
+	  });
+
+  
+  } catch (e) {
+	  console.error(e);
+  } finally {
+	  // Close the connection to the MongoDB cluster
+	  await client.close();
+  
+  }
+  
+  });
+  
+  
+
 
 
 
@@ -203,7 +294,7 @@ app.post("/api/payment/verify",(req,res)=>{
  
 
 
-// clear_passenger_details();
+//clear_passenger_details();
 
 function main()
 {

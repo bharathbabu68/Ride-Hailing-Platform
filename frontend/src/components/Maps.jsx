@@ -18,9 +18,9 @@ import {
     Autocomplete,
     DirectionsRenderer,
   } from '@react-google-maps/api'
-  import { useRef, useState } from 'react'
+  import { useEffect, useRef, useState } from 'react'
   import NavBar from './NavBar'
-  
+  import addresses from './address';
   const center = { lat: 12.9480, lng: 80.1397 }
   const { ethers } = require("ethers");
 
@@ -29,6 +29,39 @@ import {
       googleMapsApiKey: "AIzaSyCCQlQuetd7_VFAbfWIy4yD8xjxEoAjmzI",
       libraries: ['places'],
     })
+    const[account, setAccount] = useState('')
+
+    useEffect(async () => {
+      connect();
+      const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
+      // Prompt user for account connections
+      await provider.send("eth_requestAccounts", []);
+      const signer = provider.getSigner();
+      const a = await signer.getAddress();
+
+      var key={"passenger_address":a}
+      console.log("key",key);
+      fetch('http://localhost:4000/checkride',{
+        method: 'POST',
+        headers: {
+            'Content-Type' : 'application/json'
+        },
+        body:JSON.stringify(key)
+    }).then((res)=>{
+        if(res.ok)
+        return res.json();
+    }).then(async(res)=>{
+        console.log("check :",res);
+          if(res['check']==1){
+            window.location.href = "/payment";
+          }
+          else if(res['check']==2){
+            window.location.href = "/journey";
+          }
+        
+    })
+    }, [])
+    
   
     const [map, setMap] = useState(/** @type google.maps.Map */ (null))
     const [directionsResponse, setDirectionsResponse] = useState(null)
@@ -38,7 +71,7 @@ import {
     const[ridecostdrhp, setRidecostdrhp] = useState('')
     const[origin, setOrigin] = useState('')
     const[destination, setDestination] = useState('')
-    const[account, setAccount] = useState('')
+   
     const[b,setb]=useState(0)
     const [connectwalletstatus,setconnectwalletstatus] = useState("Connect wallet");
     // modal related stuff
@@ -69,6 +102,7 @@ import {
     if (!isLoaded) {
       return <SkeletonText />
     }
+   
 
     async function connect(){
       console.log("connect");
@@ -82,7 +116,7 @@ import {
       var textval = "Your account " + account + " has been connected";
   }
 
-  connect();
+  
 
     async function sign_message(){
       var message = "Confirm ride request from " + originRef.current.value + " to " + destiantionRef.current.value;
@@ -96,7 +130,7 @@ import {
           let abi = [
             "function verifyString(string, uint8, bytes32, bytes32) public pure returns (address)"
            ];
-          let contractAddress = '0x80F85dA065115F576F1fbe5E14285dA51ea39260';
+          let contractAddress = addresses["verifier_contract_address"];
           let contract = new ethers.Contract(contractAddress, abi, provider);
           await provider.send("eth_requestAccounts", []);
           const signer = provider.getSigner();
