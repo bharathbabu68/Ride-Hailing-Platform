@@ -6,17 +6,19 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 contract DRHPToken is ERC20 {
 
-    address owner;
+    address public owner;
     address[] internal stakeholders;
+
     mapping(address=>uint) internal stakes;
     mapping(address => uint256) internal rewards;
-    uint public rewardfactor=0;
     mapping(address=>uint) public  address_to_rewardfactor;
-    uint256 totalstakes=0;
     mapping(address=>uint) public user_total_stakes;
     mapping(address=>uint) public user_total_rewards;
-    uint current_reward_percentage=10;
-    uint totalrewards=0;
+
+    uint current_reward_percentage = 10;
+    uint totalrewards = 0;
+    uint public rewardfactor = 0;
+    uint256 totalstakes = 0;
     
     constructor(uint256 initialSupply) ERC20("Decentralized Ride Hailing Platform", "DRHP") {
        owner = msg.sender;
@@ -24,23 +26,29 @@ contract DRHPToken is ERC20 {
         _mint(msg.sender, initialSupply);
     }
 
-    function mint(uint amount) public returns(uint){
+    function mint(uint amount) public{
        amount = amount * 10**18;
         _mint(msg.sender, amount);
-        return 1;
     }
+
+
+    // Viw functions for frontend
     function getotalstakes() public view returns(uint){
         return totalstakes;
     }
+
     function getusertotalstake() public view returns(uint){
         return user_total_stakes[msg.sender];
     }
+
     function getusertotalreward() public view returns(uint){
         return user_total_rewards[msg.sender];
     }
+
     function getcurrentrewardpercentage() public view returns(uint){
         return current_reward_percentage;
     }
+
     function getusercurrentstake() public view returns(uint){
         uint staked_amount = stakes[msg.sender];
         return staked_amount;
@@ -49,7 +57,9 @@ contract DRHPToken is ERC20 {
     function gettotalreward() public view returns(uint){
         return totalrewards;
     }
-    
+
+    // Staking Related Functions
+
     function depositstake(uint _amount) public returns (uint){
         require(balanceOf(msg.sender)>=_amount);
          _burn(msg.sender,_amount);
@@ -96,6 +106,12 @@ contract DRHPToken is ERC20 {
        rewardfactor+=(reward_percentage*(10**10)/totalstakes);
    }
 
+   // Will be changed to governance in the future
+   function change_reward_percentage(uint new_reward) public{
+       require(msg.sender == owner);
+       current_reward_percentage = new_reward;
+   }
+
   
    function claim_reward() public{
        uint deposited_amount=stakes[msg.sender];
@@ -107,6 +123,5 @@ contract DRHPToken is ERC20 {
         stakes[msg.sender]=0;
         uint amount=deposited_amount+reward;
        _mint(msg.sender,amount);
-   }
-     
+   } 
 }

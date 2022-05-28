@@ -1,24 +1,5 @@
 export const ride_abi = [
 	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "previousOwner",
-				"type": "address"
-			},
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "newOwner",
-				"type": "address"
-			}
-		],
-		"name": "OwnershipTransferred",
-		"type": "event"
-	},
-	{
 		"inputs": [
 			{
 				"internalType": "address",
@@ -89,19 +70,6 @@ export const ride_abi = [
 	{
 		"inputs": [
 			{
-				"internalType": "uint256",
-				"name": "new_fee",
-				"type": "uint256"
-			}
-		],
-		"name": "change_one_time_fee",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
 				"internalType": "address",
 				"name": "driver_address",
 				"type": "address"
@@ -139,12 +107,12 @@ export const ride_abi = [
 	},
 	{
 		"inputs": [],
-		"name": "is_driver_valid",
+		"name": "fetch_one_time_fee",
 		"outputs": [
 			{
-				"internalType": "bool",
+				"internalType": "uint256",
 				"name": "",
-				"type": "bool"
+				"type": "uint256"
 			}
 		],
 		"stateMutability": "view",
@@ -152,12 +120,12 @@ export const ride_abi = [
 	},
 	{
 		"inputs": [],
-		"name": "owner",
+		"name": "is_driver_valid",
 		"outputs": [
 			{
-				"internalType": "address",
+				"internalType": "bool",
 				"name": "",
-				"type": "address"
+				"type": "bool"
 			}
 		],
 		"stateMutability": "view",
@@ -197,26 +165,6 @@ export const ride_abi = [
 				"type": "uint256"
 			}
 		],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "renounceOwnership",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "newOwner",
-				"type": "address"
-			}
-		],
-		"name": "transferOwnership",
-		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
 	},
