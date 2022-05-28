@@ -309,6 +309,7 @@ class DriverDashboard extends Component{
                         const tx2 = await contractwithsigner2.register_as_driver();
                         await tx2.wait();
                         this.setState({approval_processing:false});
+                        window.location.reload();
 
                         }}>Make payment</Button>
                     </Modal.Footer>

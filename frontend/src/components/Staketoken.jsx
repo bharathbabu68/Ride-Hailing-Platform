@@ -351,7 +351,7 @@ class Staketoken extends Component{
                     <p className='staketitle' style={{textAlign:"center",fontSize:"1.5rem",backgroundColor:"black",color:"white"}}>DRHP Price</p>
                     <Card.Body>
                         <Card.Text>
-                        <h1 style={{textAlign:"center"}} className='stakefont'>Rs 9.74</h1>
+                        <h1 style={{textAlign:"center"}} className='stakefont'>Rs 10.00</h1>
                         </Card.Text>
                         
                     </Card.Body>
