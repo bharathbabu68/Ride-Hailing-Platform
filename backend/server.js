@@ -124,6 +124,7 @@ app.post("/getdriverdetails", async function(req, res) {
     const arr= await cursor.toArray();
 
     var obj={"driver_details":arr};
+	console.log(obj);
 
     res.send(obj);
 

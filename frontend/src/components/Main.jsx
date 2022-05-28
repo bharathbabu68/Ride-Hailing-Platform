@@ -46,7 +46,7 @@ class Main extends Component{
                     </Route>
 
                     <Route path="/home">
-                        <Home/>
+                        <Login/>
                     </Route>
 
                     <Route path="/ride">

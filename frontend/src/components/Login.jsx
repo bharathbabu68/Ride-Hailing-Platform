@@ -5,6 +5,7 @@ import { erc20_abi } from '../Resources/erc20_abi';
 import { ride_abi } from '../Resources/ride_abi'; 
 import { Container, Row, Col, Card,Accordion, Button, Dropdown ,Spinner,Modal,Form, Carousel, Toast, Alert } from "react-bootstrap";
 import { FaWindowMinimize } from 'react-icons/fa';
+import addresses from './address';
 const { ethers } = require("ethers");  
 
 class Login extends Component{
@@ -63,9 +64,9 @@ class Login extends Component{
         }
         else{
             const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
-            let erc20contractAddress = '0x76BF91aB793A6cD5B8274E1DCae56e44c49Dfd9f';
+            let erc20contractAddress = addresses["DRHP_contract_address"]
             let erc20contract = new ethers.Contract(erc20contractAddress, erc20_abi, provider);
-            let ridecontractaddress = '0x1e836Aa81ec093C0bA977F45bd0720A593aDBF70';
+            let ridecontractaddress = addresses["ridebooking_contract_address"]
             let ridecontract = new ethers.Contract(ridecontractaddress, ride_abi, provider);
             this.setState({
                 erc20contractval: erc20contract,
@@ -92,7 +93,7 @@ class Login extends Component{
             let abi = [
               "function verifyString(string, uint8, bytes32, bytes32) public pure returns (address)"
              ];
-            let contractAddress = '0x80F85dA065115F576F1fbe5E14285dA51ea39260';
+            let contractAddress = addresses["verifier_contract_address"];
             let contract = new ethers.Contract(contractAddress, abi, provider);
             await provider.send("eth_requestAccounts", []);
             const signer = provider.getSigner();
@@ -125,7 +126,7 @@ class Login extends Component{
             let abi = [
               "function verifyString(string, uint8, bytes32, bytes32) public pure returns (address)"
              ];
-            let contractAddress = '0x80F85dA065115F576F1fbe5E14285dA51ea39260';
+            let contractAddress = addresses["verifier_contract_address"];
             let contract = new ethers.Contract(contractAddress, abi, provider);
             await provider.send("eth_requestAccounts", []);
             const signer = provider.getSigner();

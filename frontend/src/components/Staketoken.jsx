@@ -4,6 +4,7 @@ import Image from 'react-bootstrap/Image';
 import { erc20_abi } from '../Resources/drhp_abi';
 import { ride_abi } from '../Resources/ride_abi'; 
 import "./style.css";
+import addresses from './address';
 import { Badge,Container, Row, Col, Card,Accordion, Button, Dropdown ,Spinner,Modal,Form, Carousel, Toast, Alert } from "react-bootstrap";
 const { ethers } = require("ethers");  
 
@@ -72,8 +73,7 @@ class Staketoken extends Component{
         console.log("Account:", account);
         await this.setState({
             connectwalletstatus: "Wallet Connected",
-            accountaddr: account
-            
+            accountaddr: account 
         });
         await this.getalldetails();
         var textval = "Your account " + account + " has been connected";
@@ -85,8 +85,9 @@ class Staketoken extends Component{
             return;
         }
         else{
+         
             var provider = new ethers.providers.Web3Provider(window.ethereum, "any");
-            let erc20contractAddress = '0x47685265115B66dA20D84a0ebf1d4E5Eec928d0E';
+            let erc20contractAddress = addresses["DRHP_contract_address"];
             let erc20contract = new ethers.Contract(erc20contractAddress, erc20_abi, provider);
            
             this.setState({

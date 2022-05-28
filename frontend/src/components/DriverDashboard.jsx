@@ -3,6 +3,7 @@ import NavBar from './NavBar';
 import Image from 'react-bootstrap/Image';
 import { erc20_abi } from '../Resources/erc20_abi';
 import { ride_abi } from '../Resources/ride_abi'; 
+import addresses from "./address";
 import { Container, Row, Col, Card,Accordion, Button, Dropdown ,Spinner,Modal,Form, Carousel, Toast, Alert } from "react-bootstrap";
 const { ethers } = require("ethers");  
 
@@ -78,6 +79,7 @@ class DriverDashboard extends Component{
                 return res.json();
             }).then(async(res)=>{
             // redirect to payment page
+                console.log(res);
                 console.log(res["driver_details"][0]);
                 res=res["driver_details"][0];
                 console.log(res);
@@ -111,9 +113,9 @@ class DriverDashboard extends Component{
         }
         else{
             const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
-            let erc20contractAddress = '0x76BF91aB793A6cD5B8274E1DCae56e44c49Dfd9f';
+            let erc20contractAddress = addresses["DRHP_contract_address"];;
             let erc20contract = new ethers.Contract(erc20contractAddress, erc20_abi, provider);
-            let ridecontractaddress = '0x1e836Aa81ec093C0bA977F45bd0720A593aDBF70';
+            let ridecontractaddress = addresses["ridebooking_contract_address"];
             let ridecontract = new ethers.Contract(ridecontractaddress, ride_abi, provider);
             this.setState({
                 erc20contractval: erc20contract,
@@ -216,7 +218,7 @@ class DriverDashboard extends Component{
                     <hr/>
                     <Row>
                          <Col>
-                                <Card bg='light' key='light' text='dark'>
+                                <Card style={{width:"20rem"}} bg='light' key='light' text='dark'>
                                     <Card.Header>
                                         <h6>Passenger {this.state.passenger_address}</h6>
                                     </Card.Header>
@@ -248,7 +250,7 @@ class DriverDashboard extends Component{
                     <hr/>
                     <Row>
                          <Col>
-                                <Card bg='light' key='light' text='dark'>
+                                <Card style={{width:"30rem"}} bg='light' key='light' text='dark'>
                                     <Card.Header>
                                     <h6>Passenger {this.state.passenger_address}</h6>
                                     </Card.Header>
@@ -295,7 +297,7 @@ class DriverDashboard extends Component{
                         // convert drhp fare into wei
                         // const parsed_fare = ethers.utils.parseUnits(String(this.state.drhp_fare), 18);
                         // console.log("drhp_fare:", parsed_fare);
-                        const tx = await contractwithsigner.approve("0x1e836Aa81ec093C0bA977F45bd0720A593aDBF70", "100000000000000000000");
+                        const tx = await contractwithsigner.approve(addresses["ridebooking_contract_address"], "100000000000000000000");
                         this.setState({approve_payment_modal:false});
                         this.setState({approval_processing:true});
                         await tx.wait();

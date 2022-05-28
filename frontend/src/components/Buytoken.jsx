@@ -8,7 +8,8 @@ import transactions from './transactions';
 import data from './data';
 import { Line } from "react-chartjs-2";
 import { Chart as ChartJS, registerables } from 'chart.js';
-import { Chart } from 'react-chartjs-2'
+import { Chart } from 'react-chartjs-2';
+import addresses from './address';  
 import NavBar from "./NavBar";
 const { ethers } = require("ethers"); 
 ChartJS.register(...registerables);
@@ -29,6 +30,7 @@ class Buytoken extends Component{
             accountaddr: "",
             erc20contractval: "",
             ridecontractval: "",
+          
        
 
         }    
@@ -80,9 +82,9 @@ class Buytoken extends Component{
         }
         else{
             const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
-            let erc20contractAddress = '0x76BF91aB793A6cD5B8274E1DCae56e44c49Dfd9f';
+            let erc20contractAddress = addresses["DRHP_contract_address"];
             let erc20contract = new ethers.Contract(erc20contractAddress, erc20_abi, provider);
-            let ridecontractaddress = '0x1e836Aa81ec093C0bA977F45bd0720A593aDBF70';
+            let ridecontractaddress = addresses["ridebooking_contract_address"];
             let ridecontract = new ethers.Contract(ridecontractaddress, ride_abi, provider);
             this.setState({
                 erc20contractval: erc20contract,
@@ -177,7 +179,7 @@ class Buytoken extends Component{
                                     await provider.send("eth_requestAccounts", []);
                                     let signer = provider.getSigner();
                                     const account = await signer.getAddress();
-                                    let erc20contractAddress = '0x76BF91aB793A6cD5B8274E1DCae56e44c49Dfd9f';
+                                    let erc20contractAddress = addresses["DRHP_contract_address"];
                                     let erc20contract = new ethers.Contract(erc20contractAddress, erc20_abi, provider);
                                     var erc20contractwithsigner = erc20contract.connect(signer);
                                     const tx = await erc20contractwithsigner.mint(a/10);
