@@ -371,11 +371,12 @@ class DriverDashboard extends Component{
                                                 }).then(async(res)=>{
                                                 // redirect to payment page
                                                     alert("Ride request accepted");
+                                                    var data={"passenger_address": this.state.passenger_address};
+                                                    socket.emit("allotdriver",data);
                                                 }
                                                 );
-                                                console.log("ended");
-                                                var data={"passenger_address": this.state.passenger_address};
-                                                socket.emit("allotdriver",data);
+                                                
+                                               
                                                 
                                             }}>Accept Ride Request! </Button>
                                         </Card.Body>

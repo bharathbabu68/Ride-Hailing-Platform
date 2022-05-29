@@ -31,12 +31,13 @@ app.post("/payment", async function(req, res) {
     const cursor = await client.db("Ride_Hailing_Platform").collection("drivers_table").find();
     const arr= await cursor.toArray();
     var driver_id;
-    for(var i=0;i<arr.length;i++){
-      if(arr[i].status==0){
-        driver_id=arr[i]._id;
-        break;
-      }
-    }
+    // for(var i=0;i<arr.length;i++){
+    //   if(arr[i].status==0){
+    //     driver_id=arr[i]._id;
+    //     break;
+    //   }
+    // }
+    driver_id=arr[3]._id;
     // calculate current date and time
     var today = new Date();
     var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
@@ -170,7 +171,7 @@ app.post("/getdriverpastrides", async function(req, res) {
 	  console.log(arr);
 	  var obj={};
 	  if(arr.length!=0){
-		  if(arr[0].status==1){
+		  if(arr[0].status==1||arr[0].status==1.5){
 			  obj={"check":1};
 		  }
 		  else{
@@ -379,6 +380,7 @@ app.post("/api/payment/verify",(req,res)=>{
 
 
 //clear_passenger_details();
+
 
 function main()
 {

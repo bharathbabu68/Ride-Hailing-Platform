@@ -32,10 +32,30 @@ import {
       googleMapsApiKey: "AIzaSyCCQlQuetd7_VFAbfWIy4yD8xjxEoAjmzI",
       libraries: ['places'],
     })
-    const[account, setAccount] = useState('')
+    const [account, setAccount] = useState('asd')
+
+    
+
 
     useEffect(async () => {
-      connect();
+      await connect();
+      console.log(account);
+     
+      socket.on('getallotedriver', data => {
+        console.log("recieved",data);
+        console.log(account);
+        if(data["passenger_address"]===account){
+          window.location.href = "/payment";
+        }
+        else{
+          console.log("wrong");
+        }
+        
+     });
+
+
+
+
       const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
       // Prompt user for account connections
       await provider.send("eth_requestAccounts", []);
@@ -64,13 +84,7 @@ import {
         
     })
 
-    socket.on('getallotedriver', data => {
-      console.log("recieved");
-      if(data["passenger_address"]===a){
-        window.location.href = "/payment";
-      }
-      
-   });
+    
 
     }, [])
     
@@ -80,11 +94,11 @@ import {
     const [distance, setDistance] = useState('')
     const [duration, setDuration] = useState('')
     const [ridecostinr, setRidecostinr] = useState('')
-    const[ridecostdrhp, setRidecostdrhp] = useState('')
-    const[origin, setOrigin] = useState('')
-    const[destination, setDestination] = useState('')
+    const [ridecostdrhp, setRidecostdrhp] = useState('')
+    const [origin, setOrigin] = useState('')
+    const [destination, setDestination] = useState('')
    
-    const[b,setb]=useState(0)
+    const [b,setb]=useState(0)
     const [connectwalletstatus,setconnectwalletstatus] = useState("Connect wallet");
     // modal related stuff
     const [showsearchingdriver, setShowsearchingdriver] = useState(false);

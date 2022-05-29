@@ -18,8 +18,8 @@ io.on('connection', socket => {
     console.log("connected")
 
     socket.on('allotdriver', async data => {
-        console.log(data)
-        socket.emit('getallotedriver', data);
+        console.log('data',data)
+        io.emit('getallotedriver', data);
       
        
       
