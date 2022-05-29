@@ -96,7 +96,7 @@ function Journey() {
   }, []);
 
   
-  const[b,setb]=useState(0)
+  const [b,setb]=useState(0)
 
 
 

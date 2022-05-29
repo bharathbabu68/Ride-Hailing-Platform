@@ -267,7 +267,8 @@ class PaymentPage extends Component{
                         // convert drhp fare into wei
                         // const parsed_fare = ethers.utils.parseUnits(String(this.state.drhp_fare), 18);
                         // console.log("drhp_fare:", parsed_fare);
-                        const tx = await contractwithsigner.pay_to_driver(this.state.driver_address, String(this.state.parsed_fare));
+                        var parsed_fare = ethers.utils.parseUnits(String(this.state.drhp_fare), 18)
+                        const tx = await contractwithsigner.pay_to_driver(this.state.driver_address, String(parsed_fare));
                         // const tx = await contractwithsigner.allocate_driver_to_passenger("0x90DD14cD9ce555b3059c388c7791e973BE16fbf5", String(8818800000000000000));
                         await tx.wait();
                         var key={driver_address:this.state.driver_address};
