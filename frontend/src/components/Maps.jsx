@@ -21,9 +21,12 @@ import {
   import { useEffect, useRef, useState } from 'react'
   import NavBar from './NavBar'
   import addresses from './address';
+  import io from 'socket.io-client'
   const center = { lat: 12.9480, lng: 80.1397 }
   const { ethers } = require("ethers");
+  var endpoint="http://localhost:8000";
 
+  const socket = io.connect(endpoint);
   function Maps() {
     const { isLoaded } = useJsApiLoader({
       googleMapsApiKey: "AIzaSyCCQlQuetd7_VFAbfWIy4yD8xjxEoAjmzI",
@@ -60,6 +63,15 @@ import {
           }
         
     })
+
+    socket.on('getallotedriver', data => {
+      console.log("recieved");
+      if(data["passenger_address"]===a){
+        window.location.href = "/payment";
+      }
+      
+   });
+
     }, [])
     
   
@@ -319,7 +331,7 @@ import {
                 return res.json();
             }).then(async(res)=>{
               // redirect to payment page
-              window.location.href = "http://localhost:3000/payment";
+            
                
                 
             })

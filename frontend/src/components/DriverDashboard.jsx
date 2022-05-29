@@ -4,9 +4,12 @@ import Image from 'react-bootstrap/Image';
 import { erc20_abi } from '../Resources/erc20_abi';
 import { ride_abi } from '../Resources/ride_abi'; 
 import addresses from "./address";
+import io from 'socket.io-client'
 import { Container, Row, Col, Card,Accordion, Button, Dropdown ,Spinner,Modal,Form, Carousel, Toast, Alert } from "react-bootstrap";
 const { ethers } = require("ethers");  
+var endpoint="http://localhost:8000";
 
+const socket = io.connect(endpoint);
 class DriverDashboard extends Component{
 
     constructor(props){
@@ -353,6 +356,7 @@ class DriverDashboard extends Component{
                                                 var contractwithsigner = ridecontract.connect(signer);
                                                 var parsed_fare = ethers.utils.parseUnits(String(this.state.drhp_fare), 18);
                                                 const tx = await contractwithsigner.allocate_driver_to_passenger(this.state.passenger_address, String(parsed_fare));
+
                                                 await tx.wait();
                                                 var key={driver_address:this.state.driver_address};
                                                 fetch('http://localhost:4000/acceptride',{
@@ -369,6 +373,10 @@ class DriverDashboard extends Component{
                                                     alert("Ride request accepted");
                                                 }
                                                 );
+                                                console.log("ended");
+                                                var data={"passenger_address": this.state.passenger_address};
+                                                socket.emit("allotdriver",data);
+                                                
                                             }}>Accept Ride Request! </Button>
                                         </Card.Body>
                                     </Card>
