@@ -31,13 +31,13 @@ app.post("/payment", async function(req, res) {
     const cursor = await client.db("Ride_Hailing_Platform").collection("drivers_table").find();
     const arr= await cursor.toArray();
     var driver_id;
-    // for(var i=0;i<arr.length;i++){
-    //   if(arr[i].status==0){
-    //     driver_id=arr[i]._id;
-    //     break;
-    //   }
-    // }
-    driver_id=arr[3]._id;
+    for(var i=0;i<arr.length;i++){
+      if(arr[i].status==0){
+        driver_id=arr[i]._id;
+        break;
+      }
+    }
+  
     // calculate current date and time
     var today = new Date();
     var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
@@ -139,7 +139,7 @@ app.post("/getdriverpastrides", async function(req, res) {
 	const client = new MongoClient(uri);
 	try {
 	  await client.connect();
-	  var driver_address=req.body.driver_address;
+	  var driver_address=req.body.user_address;
 	  // fetch all rides from db whose driver_address is driver_address
 	  const cursor = await client.db("Ride_Hailing_Platform").collection("rides_table").find({driver_address:driver_address});
 	  const arr= await cursor.toArray();
@@ -174,6 +174,9 @@ app.post("/getdriverpastrides", async function(req, res) {
 		  if(arr[0].status==1||arr[0].status==1.5){
 			  obj={"check":1};
 		  }
+      else if(arr[0].status==0||arr[0].status==3){
+        obj={"check":0};
+      }
 		  else{
 			  obj={"check":2};
 		  }
@@ -208,17 +211,7 @@ app.post("/startride", async function(req, res) {
 	// update driver status to 2 with driver address as driver_address
 	  await client.db("Ride_Hailing_Platform").collection("drivers_table").updateOne({driver_address:driver_adress},{$set:{status:2}});
 	  // fetch driver from db whose driver_address is driver_address
-	  const cursor = await client.db("Ride_Hailing_Platform").collection("drivers_table").find({driver_address:driver_adress});
-	  const arr= await cursor.toArray();
-
-	  await client.db("Ride_Hailing_Platform").collection("rides_table").insertOne({
-		driver_address:driver_adress,
-		source:arr['source'],
-		destination:arr['destination'],
-		cost:arr['cost'],
-		passenger_address:arr['passenger_address'],
-		status:2
-	  });
+	
 
     obj = {
       "status": "success"
@@ -300,6 +293,22 @@ app.post("/collectpayment", async function(req, res) {
   // update driver status to 2 with driver address as driver_address
     await client.db("Ride_Hailing_Platform").collection("drivers_table").updateOne({driver_address:driver_adress},{$set:{status:0}});      // fetch driver from db whose driver_address is driver_address
 
+    const cursor = await client.db("Ride_Hailing_Platform").collection("drivers_table").find({driver_address:driver_adress});
+	  const arr= await cursor.toArray();
+
+	  await client.db("Ride_Hailing_Platform").collection("rides_table").insertOne({
+		driver_address:driver_adress,
+		source:arr[0]['source'],
+		destination:arr[0]['destination'],
+		cost:arr[0]['cost'],
+		passenger_address:arr[0]['passenger_address'],
+		status:3,
+    time:arr[0]['time'],
+    car:arr[0]['car_no']
+
+	  });
+
+
     obj = {
       "status": "success"
     }
@@ -376,10 +385,30 @@ app.post("/api/payment/verify",(req,res)=>{
       await client.close();
     }
   }
+
+
+  async function clear_rides_table_details(){
+    // function to clear the source, destination, passenger_address, cost, status of all drivers
+    const uri = "mongodb+srv://Suriyaa:mthaniga@cluster0.rsh4e.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
+    const client = new MongoClient(uri);
+    try {
+      await client.connect();
+      // delete all the rides from rides_table
+      await client.db("Ride_Hailing_Platform").collection("rides_table").deleteMany({});
+
+    } catch (e) {
+      console.error(e);
+    } finally {
+      // Close the connection to the MongoDB cluster
+      await client.close();
+    }
+  }
  
 
 
-//clear_passenger_details();
+// clear_passenger_details();
+// clear_rides_table_details();
+
 
 
 function main()

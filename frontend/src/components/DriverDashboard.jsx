@@ -41,6 +41,7 @@ class DriverDashboard extends Component{
             approval_processing:false,
             driver_valid:"",
             driver_status:"",
+            pastrides:[]
         }
         this.connect = this.connect.bind(this);
 
@@ -50,6 +51,8 @@ class DriverDashboard extends Component{
     async componentDidMount(){
 
        await this.connect();
+
+
 
        var ridecontractval = this.state.ridecontractval;
 
@@ -102,7 +105,26 @@ class DriverDashboard extends Component{
                     driver_status:res.status,
                 });            
                 console.log("Status of driver is", res.status);
+                
+
           })
+
+          fetch('http://localhost:4000/getdriverpastrides',{
+            method: 'POST',
+            headers: {
+                'Content-Type' : 'application/json'
+            },
+            body:JSON.stringify(key)
+        }).then((res)=>{
+            if(res.ok)
+            return res.json();
+        }).then(async(res)=>{
+        // redirect to payment page
+         
+           await this.setState({pastrides:res["driver rides"]});
+           console.log("Past rides",this.state.pastrides);
+
+      })
         }
         else{
             console.log("Driver not registered");
@@ -404,25 +426,28 @@ class DriverDashboard extends Component{
             <h4 style={{marginTop:"20px"}}>Past Rides</h4>
                     <hr/>
                     <Row>
-                         <Col>
-                                <Card style={{width:"30rem"}} bg='light' key='light' text='dark'>
-                                    <Card.Header>
-                                    <h6>Passenger {this.state.passenger_address}</h6>
-                                    </Card.Header>
-                                    <Card.Body>
-                                        <Card.Text>
-                                            <h6>Passenger Address: {this.state.passenger_address}</h6>
-                                            <h6>Source: {this.state.source}</h6>
-                                            <h6>Destination: {this.state.destination}</h6>
-                                            <h6>Car: {this.state.car}</h6>
-                                            <h6>Car Number: {this.state.car_number}</h6>
-                                            <h6>Trip Distance: {this.state.trip_distance}</h6>
-                                            <h6>Inr Fare: {this.state.inr_fare}</h6>
-                                            <h6>Drhp Fare: {this.state.drhp_fare}</h6>
-                                        </Card.Text>
-                                    </Card.Body>
-                                </Card>
-                            </Col>
+                        
+                       {this.state.pastrides.map((ride)=>{
+                            return(
+                                <Col md={3}>
+                                    <Card style={{width:"20rem"}} bg='light' key='light' text='dark'>
+                                        <Card.Header>
+                                            <h6>Passenger {ride.passenger_address}</h6>
+                                        </Card.Header>
+                                        <Card.Body>
+                                            <Card.Text>
+                                                <h6>Source: {ride.source}</h6>
+                                                <h6>Destination: {ride.destination}</h6>
+                                                <h6>Car Number: {ride.car}</h6>
+                                                <h6>Inr Fare: {ride.cost*10}</h6>
+                                                <h6>Drhp Fare: {ride.cost}</h6>
+                                            </Card.Text>
+                                        </Card.Body>
+                                    </Card>
+                                </Col>
+                            )
+                        })}
+                       
                             
                      </Row>
             </>
