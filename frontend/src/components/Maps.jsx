@@ -38,13 +38,13 @@ import {
 
 
     useEffect(async () => {
-      await connect();
-      console.log(account);
+      var address=await connect();
+      console.log(address);
      
       socket.on('getallotedriver', data => {
         console.log("recieved",data);
         console.log(account);
-        if(data["passenger_address"]===account){
+        if(data["passenger_address"]===address){
           window.location.href = "/payment";
         }
         else{
@@ -136,10 +136,11 @@ import {
       // Prompt user for account connections
       await provider.send("eth_requestAccounts", []);
       const signer = provider.getSigner();
-      const account = await signer.getAddress();
-      setAccount(account);
-      console.log("Account:", account);
+      const account2 = await signer.getAddress();
+      setAccount(account2);
+      console.log("Account:", account2);
       var textval = "Your account " + account + " has been connected";
+      return account2;
   }
 
   
