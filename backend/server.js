@@ -219,6 +219,11 @@ app.post("/startride", async function(req, res) {
 		status:2
 	  });
 
+    obj = {
+      "status": "success"
+    }
+    res.send(obj);
+
   
   } catch (e) {
 	  console.error(e);
@@ -229,7 +234,86 @@ app.post("/startride", async function(req, res) {
   }
   
   });
+
+
+  app.post("/acceptride", async function(req, res) {
+    const uri = "mongodb+srv://Suriyaa:mthaniga@cluster0.rsh4e.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
+    console.log(req.body);
+    const client = new MongoClient(uri);
+    try {
+      await client.connect();
+      var driver_adress=req.body.driver_address;
+    // update driver status to 2 with driver address as driver_address
+      await client.db("Ride_Hailing_Platform").collection("drivers_table").updateOne({driver_address:driver_adress},{$set:{status:1.5}});      // fetch driver from db whose driver_address is driver_address
   
+      obj = {
+        "status": "success"
+      }
+      res.send(obj);
+  
+    
+    } catch (e) {
+      console.error(e);
+    } finally {
+      // Close the connection to the MongoDB cluster
+      await client.close();
+    
+    }
+    
+});
+
+
+app.post("/completeride", async function(req, res) {
+  const uri = "mongodb+srv://Suriyaa:mthaniga@cluster0.rsh4e.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
+  console.log(req.body);
+  const client = new MongoClient(uri);
+  try {
+    await client.connect();
+    var driver_adress=req.body.driver_address;
+  // update driver status to 2 with driver address as driver_address
+    await client.db("Ride_Hailing_Platform").collection("drivers_table").updateOne({driver_address:driver_adress},{$set:{status:3}});      // fetch driver from db whose driver_address is driver_address
+
+    obj = {
+      "status": "success"
+    }
+    res.send(obj);
+
+  
+  } catch (e) {
+    console.error(e);
+  } finally {
+    // Close the connection to the MongoDB cluster
+    await client.close();
+  
+  }
+  
+});
+
+app.post("/collectpayment", async function(req, res) {
+  const uri = "mongodb+srv://Suriyaa:mthaniga@cluster0.rsh4e.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
+  console.log(req.body);
+  const client = new MongoClient(uri);
+  try {
+    await client.connect();
+    var driver_adress=req.body.driver_address;
+  // update driver status to 2 with driver address as driver_address
+    await client.db("Ride_Hailing_Platform").collection("drivers_table").updateOne({driver_address:driver_adress},{$set:{status:0}});      // fetch driver from db whose driver_address is driver_address
+
+    obj = {
+      "status": "success"
+    }
+    res.send(obj);
+
+  
+  } catch (e) {
+    console.error(e);
+  } finally {
+    // Close the connection to the MongoDB cluster
+    await client.close();
+  
+  }
+  
+});
   
 
 

@@ -270,7 +270,24 @@ class PaymentPage extends Component{
                         const tx = await contractwithsigner.pay_to_driver(this.state.driver_address, String(this.state.parsed_fare));
                         // const tx = await contractwithsigner.allocate_driver_to_passenger("0x90DD14cD9ce555b3059c388c7791e973BE16fbf5", String(8818800000000000000));
                         await tx.wait();
-                        this.setState({pay_to_driver_modal:false});
+                        var key={driver_address:this.state.driver_address};
+                        console.log("address",this.state.accountaddr);
+                        fetch('http://localhost:4000/startride',{
+                            method: 'POST',
+                            headers: {
+                                'Content-Type' : 'application/json'
+                            },
+                            body:JSON.stringify(key)
+                        }).then((res)=>{
+                            if(res.ok)
+                            return res.json();
+                        }).then(async(res)=>{
+                        // redirect to payment page
+                            this.setState({pay_to_driver_modal:false});
+                            window.location.href = "/journey";
+                        }
+                        );
+    
 
                         }}>Make Payment</Button>
                     </Modal.Footer>

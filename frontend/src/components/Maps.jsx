@@ -52,7 +52,7 @@ import {
         return res.json();
     }).then(async(res)=>{
         console.log("check :",res);
-          if(res['check']==1){
+          if(res['check']==1 || res['check']==1.5){
             window.location.href = "/payment";
           }
           else if(res['check']==2){

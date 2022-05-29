@@ -21,8 +21,10 @@ import {
 } from '@react-google-maps/api'
 import { useRef, useState,useEffect } from 'react'
 import NavBar from './NavBar'
+import addresses from './address';
+import { ride_abi } from '../Resources/ride_abi'; 
 
-const center = { lat: 48.8584, lng: 2.2945 }
+const center = { lat: 12.9480, lng: 80.1397 }
 const { ethers } = require("ethers");
 
 function Journey() {
@@ -34,11 +36,12 @@ function Journey() {
   const [distance, setDistance] = useState('')
   const [duration, setDuration] = useState('')
   const [ridecostinr, setRidecostinr] = useState('')
-  const[ridecostdrhp, setRidecostdrhp] = useState('')
-  const[origin, setOrigin] = useState('fsdfs')
-  const[destination, setDestination] = useState('')
-  const[dummy, setDummy] = useState('qqqq')
-  const[isMenuOpen,SetMenuOpen] = useState(false);
+  const [ridecostdrhp, setRidecostdrhp] = useState('')
+  const [origin, setOrigin] = useState('')
+  const [destination, setDestination] = useState('')
+  const [dummy, setDummy] = useState('')
+  const [isMenuOpen,SetMenuOpen] = useState(false);
+  const [driverAddress, setDriverAddress] = useState('');
 
 
   const { isLoaded } = useJsApiLoader({
@@ -48,12 +51,15 @@ function Journey() {
 
 
   useEffect(async () => {
+
+    await connect();
    
     const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
     // Prompt user for account connections
     await provider.send("eth_requestAccounts", []);
     const signer = provider.getSigner();
     const accountaddress = await signer.getAddress();
+    setaccountaddr(accountaddress);
    
     var key={user_address:accountaddress};
 
@@ -67,16 +73,21 @@ function Journey() {
             if(res.ok)
             return res.json();
         }).then(async(res)=>{
+          // check if res is not null
+          if(res["driver_details"].length==0 || res["driver_details"][0]["status"]!=2){
+            alert("Your ride is invalid");
+            window.location.href = "/";
+          }
           
-            console.log("result is",res);
+          calculateRoute(res["driver_details"][0]["source"],res["driver_details"][0]["destination"]);
             
-            await   setOrigin(res["driver_details"][0]["source"]);
+            await setOrigin(res["driver_details"][0]["source"]);
             await setDestination(res["driver_details"][0]["destination"]);
             await setDistance(res["driver_details"][0]["distance"]);
             await setDuration(res["driver_details"][0]["duration"]);
             await setRidecostinr(res["driver_details"][0]["ridecostinr"]);
             await setRidecostdrhp(res["driver_details"][0]["ridecostdrhp"]);
-           calculateRoute(res["driver_details"][0]["source"],res["driver_details"][0]["destination"]);
+            await setDriverAddress(res["driver_details"][0]["driver_address"]);
            
             
 
@@ -135,8 +146,6 @@ function Journey() {
   }
 
   async function calculateRoute(originRef,destiantionRef) {
-    console.log("hi");
-    
     console.log(originRef,destiantionRef);
 
     if (originRef=== '' || destiantionRef=== '') {
@@ -221,7 +230,6 @@ function Journey() {
           }}
           onLoad={map => setMap(map)}
         >
-          <Marker position={center} />
           {directionsResponse && (
             <DirectionsRenderer directions={directionsResponse} />
           )}
@@ -244,7 +252,32 @@ function Journey() {
             <h5 style={{fontFamily:'Roboto', color:"white"}}>Cost (in DRHP tokens): {ridecostdrhp}</h5>
             <h5 style={{fontFamily:'Roboto', color:"white"}}>Cost (in INR): {ridecostinr}</h5>
 
-          <Button className="mb-5 mt-5" style={{position:"relative", top:"10px", right:"0px"}} variant='dark' >End Ride</Button>
+          <Button className="mb-5 mt-5" style={{position:"relative", top:"10px", right:"0px"}} variant='dark' onClick={async ()=>{
+                const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
+                let ridecontractaddress = addresses["ridebooking_contract_address"]
+                let ridecontract = new ethers.Contract(ridecontractaddress, ride_abi, provider);
+                let signer = provider.getSigner();
+                var contractwithsigner = ridecontract.connect(signer);
+                const tx = await contractwithsigner.complete_ride_by_passenger(driverAddress);
+                await tx.wait();
+                var key={driver_address:driverAddress};
+                fetch('http://localhost:4000/completeride',{
+                            method: 'POST',
+                            headers: {
+                                'Content-Type' : 'application/json'
+                            },
+                            body:JSON.stringify(key)
+                        }).then((res)=>{
+                            if(res.ok)
+                            return res.json();
+                        }).then(async(res)=>{
+                        // redirect to payment page
+                            alert("Ride Completed Successfully, thanks for riding !");
+                            window.location.href = "/";
+                        }
+                        );
+
+          }} >End Ride</Button>
          
             <br/>
            

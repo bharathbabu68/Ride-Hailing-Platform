@@ -213,6 +213,115 @@ class DriverDashboard extends Component{
         }
     }
 
+    rendercollectpayment(){
+        if(this.state.driver_status==3){
+            return(
+                <>
+                <h4 style={{marginTop:"20px"}}>Collect Payment</h4>
+                <p> Thanks for completing the ride, collect payment from passenger !</p>
+                <hr/>
+                <Row>
+                        <Col>
+                            <Card bg='light' key='light' text='dark'>
+                                <Card.Header>
+                                    <h6>Passenger {this.state.passenger_address}</h6>
+                                </Card.Header>
+                                <Card.Body>
+                                    <Card.Text>
+                                        <h6>Source: {this.state.source}</h6>
+                                        <h6>Destination: {this.state.destination}</h6>
+                                        <h6>Car: {this.state.car}</h6>
+                                        <h6>Car Number: {this.state.car_number}</h6>
+                                        <h6>Trip Distance: {this.state.trip_distance}</h6>
+                                        <h6>Inr Fare: {this.state.inr_fare}</h6>
+                                        <h6>Drhp Fare: {this.state.drhp_fare}</h6>
+                                    </Card.Text>
+                                    <br/>
+                                    <Button variant="dark" onClick={async ()=>{
+                                        var ridecontract  = this.state.ridecontractval;
+                                        const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
+                                        let signer = provider.getSigner();
+                                        var contractwithsigner = ridecontract.connect(signer);
+                                        const tx = await contractwithsigner.withdraw_earnings_from_ride();
+                                        await tx.wait();
+                                        var key={driver_address:this.state.driver_address};
+                                        fetch('http://localhost:4000/collectpayment',{
+                                            method: 'POST',
+                                            headers: {
+                                                'Content-Type' : 'application/json'
+                                            },
+                                            body:JSON.stringify(key)
+                                        }).then((res)=>{
+                                            if(res.ok)
+                                            return res.json();
+                                        }).then(async(res)=>{
+                                        // redirect to payment page
+                                            alert("Payment collected successfully !");
+                                            window.location.reload();
+                                        }
+                                        );
+                                    }}>Collect Payment! </Button>
+                                </Card.Body>
+                            </Card>
+                        </Col>
+                        
+                    </Row>
+                </>
+            )
+        }
+        else{
+            return(
+                <>
+                    <h4 style={{marginTop:"20px"}}>Collect Payments from Passengers </h4>
+                    <hr/>
+                    <p>Nothing here currently !</p>
+                </>
+            )
+        }
+    }
+
+    renderwaitingforpayment(){
+        if(this.state.driver_status==1.5){
+            return(
+                <>
+                <h4 style={{marginTop:"20px"}}>Waiting for Payment</h4>
+                <p> Just waiting for payment from the passenger side !</p>
+                <hr/>
+                <Row>
+                        <Col>
+                            <Card bg='light' key='light' text='dark'>
+                                <Card.Header>
+                                    <h6>Passenger {this.state.passenger_address}</h6>
+                                </Card.Header>
+                                <Card.Body>
+                                    <Card.Text>
+                                        <h6>Source: {this.state.source}</h6>
+                                        <h6>Destination: {this.state.destination}</h6>
+                                        <h6>Car: {this.state.car}</h6>
+                                        <h6>Car Number: {this.state.car_number}</h6>
+                                        <h6>Trip Distance: {this.state.trip_distance}</h6>
+                                        <h6>Inr Fare: {this.state.inr_fare}</h6>
+                                        <h6>Drhp Fare: {this.state.drhp_fare}</h6>
+                                    </Card.Text>
+                                </Card.Body>
+                            </Card>
+                        </Col>
+                        
+                    </Row>
+                </>
+            )
+        }
+        else{
+            return(
+                <>
+                    <h4 style={{marginTop:"20px"}}>Waiting for payments from passenger </h4>
+                    <hr/>
+                    <p>Nothing here currently !</p>
+                </>
+            )
+        }
+    }
+
     renderriderequest(){
         if(this.state.driver_status==1){
             return(
@@ -237,8 +346,7 @@ class DriverDashboard extends Component{
                                             </Card.Text>
                                             <br/>
                                             <Button variant="dark" onClick={async ()=>{
-                                                // Change status of driver to '2' in the database
-        
+                                                // Change status of driver to '1.5' in the database
                                                 var ridecontract  = this.state.ridecontractval;
                                                 const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
                                                 let signer = provider.getSigner();
@@ -246,6 +354,21 @@ class DriverDashboard extends Component{
                                                 var parsed_fare = ethers.utils.parseUnits(String(this.state.drhp_fare), 18);
                                                 const tx = await contractwithsigner.allocate_driver_to_passenger(this.state.passenger_address, String(parsed_fare));
                                                 await tx.wait();
+                                                var key={driver_address:this.state.driver_address};
+                                                fetch('http://localhost:4000/acceptride',{
+                                                    method: 'POST',
+                                                    headers: {
+                                                        'Content-Type' : 'application/json'
+                                                    },
+                                                    body:JSON.stringify(key)
+                                                }).then((res)=>{
+                                                    if(res.ok)
+                                                    return res.json();
+                                                }).then(async(res)=>{
+                                                // redirect to payment page
+                                                    alert("Ride request accepted");
+                                                }
+                                                );
                                             }}>Accept Ride Request! </Button>
                                         </Card.Body>
                                     </Card>
@@ -350,33 +473,6 @@ class DriverDashboard extends Component{
                         <Modal.Footer>
                     </Modal.Footer>
                 </Modal>
-
-                <Modal centered show={this.state.pay_to_driver_modal}>
-                        <Modal.Header >
-                        <Modal.Title>Pay to Driver</Modal.Title>
-                        </Modal.Header>
-                        <Modal.Body>
-                        <p>Make payment of {this.state.drhp_fare} DRHP tokens to start your ride! </p>
-                        <p> Your available token balance: {this.state.drhp_balance} tokens</p>
-                        </Modal.Body>
-                        <Modal.Footer>
-                        <Button variant="dark" onClick={async() => {
-                        var ridecontract  = this.state.ridecontractval;
-                        const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
-                        let signer = provider.getSigner();
-                        console.log(signer);
-                        var contractwithsigner = ridecontract.connect(signer);
-                        // convert drhp fare into wei
-                        // const parsed_fare = ethers.utils.parseUnits(String(this.state.drhp_fare), 18);
-                        // console.log("drhp_fare:", parsed_fare);
-                        const tx = await contractwithsigner.pay_to_driver(this.state.driver_address, String(this.state.parsed_fare));
-                        // const tx = await contractwithsigner.allocate_driver_to_passenger("0x90DD14cD9ce555b3059c388c7791e973BE16fbf5", String(8818800000000000000));
-                        await tx.wait();
-                        this.setState({pay_to_driver_modal:false});
-
-                        }}>Make Payment</Button>
-                    </Modal.Footer>
-                </Modal>
         </>
         );
 
@@ -402,9 +498,13 @@ class DriverDashboard extends Component{
                     
                 {this.renderwalletdetails()}
 
+                {this.rendercollectpayment()}
+
                 {this.renderactiveride()}     
 
-                {this.renderriderequest()}         
+                {this.renderriderequest()}
+
+                {this.renderwaitingforpayment()}         
                         
                 {this.renderpastrides()}
                     
