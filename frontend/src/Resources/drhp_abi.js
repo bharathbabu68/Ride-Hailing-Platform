@@ -237,6 +237,19 @@ export const erc20_abi= [
 	},
 	{
 		"inputs": [],
+		"name": "getNumberOfRewardDistributions",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
 		"name": "getcurrentrewardpercentage",
 		"outputs": [
 			{

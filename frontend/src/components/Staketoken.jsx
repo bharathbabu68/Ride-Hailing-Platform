@@ -99,35 +99,45 @@ class Staketoken extends Component{
             // var signer = provider.getSigner();
             // var account = await signer.getAddress();
             var c_drhp_balance = String(await erc20contract.getotalstakes({from: this.state.accountaddr}));
-            this.setState({total_value_locked:c_drhp_balance});
+            // convert to ether
+            var c_drhp_balance_ether = ethers.utils.formatEther(c_drhp_balance);
+            this.setState({total_value_locked:c_drhp_balance_ether});
 
              await provider.send("eth_requestAccounts", []);
             var signer = provider.getSigner();
             var account = await signer.getAddress();
             var c_drhp_balance = String(await erc20contract.balanceOf(this.state.accountaddr));
-            this.setState({balance:c_drhp_balance});
-            console.log("balance",c_drhp_balance);
+            // convert to ether
+            var c_drhp_balance_ether = ethers.utils.formatEther(c_drhp_balance);
+            this.setState({balance:c_drhp_balance_ether});
           
             var s = String(await erc20contract.gettotalreward());
+            var s_ether = ethers.utils.formatEther(s);
             console.log("total rewards",s);
-            await this.setState({total_rewards_given:s});
+            await this.setState({total_rewards_given:s_ether});
 
             console.log(this.state.accountaddr);
 
            
             var s = String(await erc20contract.getusertotalstake({from:this.state.accountaddr}));
+            s = ethers.utils.formatEther(s);
             console.log("user_total_stake",s);
             await this.setState({user_total_stake:s});
 
            
             var s = String(await erc20contract.getusertotalreward({from:this.state.accountaddr}));
+            s = ethers.utils.formatEther(s);
             await this.setState({user_total_rewards:s});
 
+
            
-            var s = String(await erc20contract.getcurrentrewardpercentage({from:this.state.accountaddr}));
-            await  this.setState({current_epoch_rewards:s});
+            var s = String(await erc20contract.getNumberOfRewardDistributions());
+            // convert s into ether
+            await this.setState({current_epoch_rewards:s});
 
             var s = String(await erc20contract.getusercurrentstake({from:this.state.accountaddr}));
+            s = ethers.utils.formatEther(s);
+            console.log("user_current_stake",s);
             await this.setState({available_for_harvest:s});
 
             
@@ -248,12 +258,14 @@ class Staketoken extends Component{
             let signer = provider.getSigner();
             console.log(signer);
             var contractwithsigner = erc20contract.connect(signer);
-          
-            const tx = await contractwithsigner.depositstake(a);
+            // convert a into wei
+            var a_wei = ethers.utils.parseEther(a);
+            const tx = await contractwithsigner.depositstake(a_wei);
+            this.setState({show:false});
             this.setState({transactionstate:true});
             await tx.wait();
             this.setState({transactionstate:false});
-            
+            window.location.reload();
             console.log("Printing transaction",tx);
 
         }} className="mt-5" variant="secondary">Deposit</Button>
@@ -280,12 +292,14 @@ class Staketoken extends Component{
             let signer = provider.getSigner();
             console.log(signer);
             var contractwithsigner = erc20contract.connect(signer);
-          
-            const tx = await contractwithsigner.removestake(a);
+            // convert a into wei
+            var a_wei = ethers.utils.parseEther(a);
+            const tx = await contractwithsigner.removestake(a_wei);
             this.setState({transactionstate:true});
             this.setState({removestakemodal:false});
             await tx.wait();
             this.setState({transactionstate:false});
+            window.location.reload();
           
             
             
@@ -363,12 +377,12 @@ class Staketoken extends Component{
             <Container style={{marginLeft:"20%"}} className='mt-5'>
                 <div style={{paddingTop:"10px",border:"2px solid #FCFFE7",borderRadius:"5%",width:"60%"}}>
                     <p  style={{marginLeft:"30%",paddingLeft:"10px",paddingRight:"10px",color:"white",width:"fit-content",fontSize:"2rem",backgroundColor:"#E20880",fontFamily:"sans-serif"}} >STAKING POOL (DRHP)</p>
-                    <p style={{marginLeft:"60%",color:"#000000"}}>CURRENT APR <span style={{paddingLeft:"10px",paddingRight:"10px",color:"white",width:"fit-content",backgroundColor:"#E20880",fontFamily:"sans-serif"}}>  (10%) </span></p>
+                    {/* <p style={{marginLeft:"60%",color:"#000000"}}>CURRENT APR <span style={{paddingLeft:"10px",paddingRight:"10px",color:"white",width:"fit-content",backgroundColor:"#E20880",fontFamily:"sans-serif"}}>  (10%) </span></p> */}
                     
                     <Row style={{backgroundColor:"#F1F1F1",margin:"10px 0px 0px",padding:"3%"}}>
                         <Col md={4} style={{boxShadow: "0px 5px #DEB6AB",borderRadius:"10% 10% 0 0",paddingTop:"3%",backgroundColor:"white",textAlign:"center"}}>
-                            <p style={{fontSize:"10px",fontFamily:"sans-serif"}}>CURRENT REWARD</p>
-                            <p style={{fontSize:"16px"}}>{this.state.currentrewards} DRHP</p>
+                            <p style={{fontSize:"10px",fontFamily:"sans-serif"}}>USER BALANCE</p>
+                            <p style={{fontSize:"16px"}}>{this.state.balance} DRHP</p>
                             
                         </Col>
                         <Col md={4}></Col>    
@@ -382,21 +396,21 @@ class Staketoken extends Component{
                     <p className="mt-3" style={{textAlign:"right",fontSize:"12px"}}>CURRENT EPOCH :  57/400</p>
                     <Row style={{paddingLeft:"15%"}}>
                     <Col md={4} style={{padding:"2%",textAlign:"center",backgroundColor:"black",margin:"5px 15px"}}>
-                        <p style={{color:"white"}}>User Deposit</p>
+                        <p style={{color:"white"}}>Total Staked Till Now (Current + Past Stakes)</p>
                          <Badge bg="light" text="dark">{this.state.user_total_stake} DRHP</Badge>
                     </Col> <Col md={4} style={{padding:"2%",textAlign:"center",backgroundColor:"black",margin:"5px 15px"}}>
-                        <p style={{color:"white"}}>Rewards Claimed</p>
+                        <p style={{color:"white"}}>Rewards Earned Till Date</p>
                          <Badge bg="light" text="dark">{this.state.user_total_rewards} DRHP</Badge>
                     </Col>
                     </Row>
                 
                     <Row style={{paddingLeft:"15%"}}>
                         <Col md={4} style={{padding:"2%",textAlign:"center",backgroundColor:"black",margin:"5px 15px"}}>
-                        <p style={{color:"white"}}>Current Epoch Reward</p>
-                         <Badge bg="light" text="dark">{this.state.current_epoch_rewards} %</Badge>
+                        <p style={{color:"white"}}>Number of Reward Distribution Events</p>
+                         <Badge bg="light" text="dark">{this.state.current_epoch_rewards}</Badge>
                         </Col>
                         <Col md={4} style={{padding:"2%",textAlign:"center",backgroundColor:"black",margin:"5px 15px"}}>
-                        <p style={{color:"white"}}>Available For Harvest</p>
+                        <p style={{color:"white"}}>Available For Harvest (Staked value + Reward Value)</p>
                          <Badge bg="light" text="dark">{this.state.available_for_harvest} DRHP</Badge>
                         </Col>
                     </Row>
@@ -409,7 +423,7 @@ class Staketoken extends Component{
   <Button onClick={()=>{
       this.setState({removestakemodal:true});
 
-  }} style={{marginRight:"30px"}} variant="outline-secondary">Remove stake</Button>
+  }} style={{marginRight:"30px"}} variant="outline-secondary">Withdraw</Button>
 
                 <Button  onClick={async (e)=>{
      
@@ -423,7 +437,7 @@ class Staketoken extends Component{
      this.setState({transactionstate:true});
      await tx.wait();
      this.setState({transactionstate:false});
-     
+     window.location.reload();
       console.log("Reward claimed");
 
 }} variant="dark">Harvest</Button>

@@ -1,7 +1,7 @@
 var addresses=
     {
-        ridebooking_contract_address: "0x876CDF8F0685874f65ff94d8bac647F47B61510C",
-        DRHP_contract_address: "0xebCA34F849a307B67e053e476136E7311cD9d9d6",
+        ridebooking_contract_address: "0xB275A02F0281C3fE10C24AcBab052ddf6475794B",
+        DRHP_contract_address: "0x0ADD4Bf8134907e9e4e7C02472999B190beD0e50",
         verifier_contract_address: "0x949D1EC16b59749a7d1D886e837AdAf6C9Ab3055"
     }
 
