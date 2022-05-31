@@ -112,7 +112,14 @@ class Buytoken extends Component{
             <NavBar />
            
            <Container fluid style={{paddingLeft:"5%", paddingRight:"5%", paddingTop:"3%"}}>
-            <h2>Buy DRHP Tokens Here!</h2>
+            <Row>
+                <Col md={9}>
+                <h2>Buy DRHP Tokens Here!</h2> 
+                </Col>
+                <Col md={3}>
+                <h4 className='gld'>Balance: <strong>{this.state.drhp_balance} DRHP</strong></h4>
+                </Col>
+            </Row>
             <hr/>
             <p> Conveniently buy our DRHP tokens here using our Razorpay payment gateway, once payment is completed your coins will be added straight to your wallet address !</p>
             <br/>
@@ -254,22 +261,21 @@ class Buytoken extends Component{
                         <h4 style={{textAlign:"left"}}>Wallet Balance</h4>
                         <br/>
                   
-                        <Image style={{height:"80%",width:"90%"}} src="https://i.pinimg.com/474x/46/9e/6a/469e6abd3e17f9c1251ee140473d9297.jpg" />
+                        <Image style={{height:"80%",width:"90%"}} src="https://png.pngtree.com/thumb_back/fw800/back_our/20190620/ourmid/pngtree-vector-cartoon-hand-drawn-taxi-poster-background-illustration-image_172625.jpg" />
                        
                    
-                    <div style={{position:"absolute",top:"10%",left:"20%"}} class="centered">
+                    <div style={{position:"absolute",top:"10%",left:"20%", textAlign:"center"}}>
                         <br/>
-                        <h4 className='balance'>Total Balance</h4>
-                        <h4>{this.state.drhp_balance} DRHP</h4>
-                        <p className='balance'>Recharge here via Razorpay</p>
+                        <h3 style={{marginLeft:"30px"}}>Total Balance</h3>
+                        <h2 style={{color:"red"}}>{this.state.drhp_balance} DRHP</h2>
+                        <p>Quick Recharge here via Razorpay</p>
                         
-                        </div>
                         {/* <div style={{position:"absolute",top:"50%",left:"40%"}} class="centered"> */}
                         
-                        {/* <Button
+                        <Button
                       onClick={(e)=>{
                             var orderId ;
-                            var key={"amount":100};
+                            var key={"amount":100000};
                           
                                 
                     
@@ -356,7 +362,7 @@ class Buytoken extends Component{
                        }}
                           variant="outline-success">Recharge</Button>{' '}
                         </div>
-                  */}
+                 
                     
                     </Col>
                         

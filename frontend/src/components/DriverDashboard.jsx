@@ -232,7 +232,7 @@ class DriverDashboard extends Component{
                 <>
                     <h4 style={{marginTop:"20px"}}>Active Ride (Ongoing)</h4>
                     <hr/>
-                    <p>No active rides currently</p>
+                    <p style={{textAlign:"center"}}>No active rides currently</p>
                 </>
             )
         }
@@ -299,7 +299,7 @@ class DriverDashboard extends Component{
                 <>
                     <h4 style={{marginTop:"20px"}}>Collect Payments from Passengers </h4>
                     <hr/>
-                    <p>Nothing here currently !</p>
+                    <p style={{textAlign:"center"}}>Nothing here currently !</p>
                 </>
             )
         }
@@ -341,7 +341,7 @@ class DriverDashboard extends Component{
                 <>
                     <h4 style={{marginTop:"20px"}}>Waiting for payments from passenger </h4>
                     <hr/>
-                    <p>Nothing here currently !</p>
+                    <p style={{textAlign:"center"}}>Nothing here currently !</p>
                 </>
             )
         }
@@ -391,10 +391,11 @@ class DriverDashboard extends Component{
                                                     if(res.ok)
                                                     return res.json();
                                                 }).then(async(res)=>{
-                                                // redirect to payment page
+                                              
                                                     alert("Ride request accepted");
                                                     var data={"passenger_address": this.state.passenger_address};
-                                                    socket.emit("allotdriver",data);
+                                                    await socket.emit("allotdriver",data);
+                                                    window.location.reload();
                                                 }
                                                 );
                                                 
@@ -414,7 +415,7 @@ class DriverDashboard extends Component{
                 <>
                     <h4 style={{marginTop:"20px"}}>Ride Requests (Yet to be approved by you) </h4>
                     <hr/>
-                    <p>No ride requests currently</p>
+                    <p style={{textAlign:"center"}}>No ride requests currently</p>
                 </>
             )
         }
