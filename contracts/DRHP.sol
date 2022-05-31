@@ -19,6 +19,7 @@ contract DRHPToken is ERC20 {
     uint totalrewards = 0;
     uint public rewardfactor = 0;
     uint256 totalstakes = 0;
+    uint reward_distributions = 0;
     
     constructor(uint256 initialSupply) ERC20("Decentralized Ride Hailing Platform", "DRHP") {
        owner = msg.sender;
@@ -32,9 +33,13 @@ contract DRHPToken is ERC20 {
     }
 
 
-    // Viw functions for frontend
+    // View functions for frontend
     function getotalstakes() public view returns(uint){
         return totalstakes;
+    }
+
+    function getNumberOfRewardDistributions() public view returns(uint){
+        return reward_distributions;
     }
 
     function getusertotalstake() public view returns(uint){
@@ -93,6 +98,7 @@ contract DRHPToken is ERC20 {
         //check if stakeholder's current stake is greater than amount
         require(stakes[msg.sender]>=amount);
         stakes[msg.sender]-=amount;
+        totalstakes -= amount;
         // mint tokens to the stakeholder without any reward
         _mint(msg.sender,amount);
     }
@@ -104,6 +110,7 @@ contract DRHPToken is ERC20 {
        require(totalstakes>0);
        current_reward_percentage=reward_percentage;
        rewardfactor+=(reward_percentage*(10**10)/totalstakes);
+       reward_distributions+=1;
    }
 
    // Will be changed to governance in the future

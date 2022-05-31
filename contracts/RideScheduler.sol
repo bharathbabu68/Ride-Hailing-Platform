@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 contract RideScheduler{
 
     uint one_time_fee = 100 * 10**18; // one-time fee for registartion of a new driver, can be changed by governance in the future
-    address token_address = 0x7A785Efa09aF769CAa680CEcB41610763944158B;
+    address token_address = 0x0ADD4Bf8134907e9e4e7C02472999B190beD0e50;
 
     struct driver {
         bool driver_validity_status; // if driver violates our rules, he can be removed by governance (will be implemented in the future)
