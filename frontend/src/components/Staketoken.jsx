@@ -6,6 +6,7 @@ import { ride_abi } from '../Resources/ride_abi';
 import "./style.css";
 import addresses from './address';
 import { Badge,Container, Row, Col, Card,Accordion, Button, Dropdown ,Spinner,Modal,Form, Carousel, Toast, Alert } from "react-bootstrap";
+import { parse } from 'url';
 const { ethers } = require("ethers");  
 
 class Staketoken extends Component{
@@ -253,6 +254,14 @@ class Staketoken extends Component{
         <Form.Control id="t1" type="text" />
         <Button onClick={async()=>{
             var a=document.getElementById("t1").value;
+            console.log("Balance vs enterred amount");
+            console.log(a);
+            console.log(this.state.balance);
+
+            if(parseFloat(a)>parseFloat(this.state.balance)){
+                alert("Insufficient balance");
+                return;
+            }
             var erc20contract  = this.state.erc20contractval;
             const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
             let signer = provider.getSigner();
@@ -287,6 +296,9 @@ class Staketoken extends Component{
         <Form.Control id="t2" type="text" />
         <Button onClick={async()=>{
             var a=document.getElementById("t2").value;
+            if(parseFloat(a) > parseFloat(this.state.available_for_harvest)){
+                alert("Insufficient balance");
+            }
             var erc20contract  = this.state.erc20contractval;
             const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
             let signer = provider.getSigner();
@@ -362,10 +374,10 @@ class Staketoken extends Component{
                     </Col>
                     <Col className="mt-5" md={12}>
                     <Card>
-                    <p className='staketitle' style={{textAlign:"center",fontSize:"1.5rem",backgroundColor:"black",color:"white"}}>DRHP Price</p>
+                    <p className='staketitle' style={{textAlign:"center",fontSize:"1.5rem",backgroundColor:"black",color:"white"}}>User Balance</p>
                     <Card.Body>
                         <Card.Text>
-                        <h1 style={{textAlign:"center"}} className='stakefont'>Rs 10.00</h1>
+                        <h1 style={{textAlign:"center"}} className='stakefont'>{this.state.balance} DRHP</h1>
                         </Card.Text>
                         
                     </Card.Body>
@@ -381,22 +393,22 @@ class Staketoken extends Component{
                     
                     <Row style={{backgroundColor:"#F1F1F1",margin:"10px 0px 0px",padding:"3%"}}>
                         <Col md={4} style={{boxShadow: "0px 5px #DEB6AB",borderRadius:"10% 10% 0 0",paddingTop:"3%",backgroundColor:"white",textAlign:"center"}}>
-                            <p style={{fontSize:"10px",fontFamily:"sans-serif"}}>USER BALANCE</p>
-                            <p style={{fontSize:"16px"}}>{this.state.balance} DRHP</p>
+                            <p style={{fontSize:"10px",fontFamily:"sans-serif"}}>DRHP Price (INR)</p>
+                            <p style={{fontSize:"16px"}}>10 INR</p>
                             
                         </Col>
                         <Col md={4}></Col>    
 
                         <Col md={4} style={{boxShadow: "0px 5px #DEB6AB",borderRadius:"10% 10% 0 0",paddingTop:"3%",backgroundColor:"white",textAlign:"center"}}>
-                            <p style={{fontSize:"10px",fontFamily:"sans-serif"}}>TOTAL TOKENS STAKED</p>
-                            <p style={{fontSize:"16px"}}>{this.state.currentrewards} DRHP</p>
+                            <p style={{fontSize:"10px",fontFamily:"sans-serif"}}>User balance in INR</p>
+                            <p style={{fontSize:"16px"}}>{this.state.balance*10} INR</p>
                             
                             </Col>
                     </Row>
-                    <p className="mt-3" style={{textAlign:"right",fontSize:"12px"}}>CURRENT EPOCH :  57/400</p>
+                    <p className="mt-3" style={{textAlign:"right",fontSize:"12px"}}>CURRENT EPOCH :  {this.state.current_epoch_rewards+1}</p>
                     <Row style={{paddingLeft:"15%"}}>
                     <Col md={4} style={{padding:"2%",textAlign:"center",backgroundColor:"black",margin:"5px 15px"}}>
-                        <p style={{color:"white"}}>Total Staked Till Now (Current + Past Stakes)</p>
+                        <p style={{color:"white"}}>Total Staked Till Now</p>
                          <Badge bg="light" text="dark">{this.state.user_total_stake} DRHP</Badge>
                     </Col> <Col md={4} style={{padding:"2%",textAlign:"center",backgroundColor:"black",margin:"5px 15px"}}>
                         <p style={{color:"white"}}>Rewards Earned Till Date</p>
@@ -406,11 +418,11 @@ class Staketoken extends Component{
                 
                     <Row style={{paddingLeft:"15%"}}>
                         <Col md={4} style={{padding:"2%",textAlign:"center",backgroundColor:"black",margin:"5px 15px"}}>
-                        <p style={{color:"white"}}>Number of Reward Distribution Events</p>
+                        <p style={{color:"white"}}>Reward distributions</p>
                          <Badge bg="light" text="dark">{this.state.current_epoch_rewards}</Badge>
                         </Col>
                         <Col md={4} style={{padding:"2%",textAlign:"center",backgroundColor:"black",margin:"5px 15px"}}>
-                        <p style={{color:"white"}}>Available For Harvest (Staked value + Reward Value)</p>
+                        <p style={{color:"white"}}>Available For Harvest</p>
                          <Badge bg="light" text="dark">{this.state.available_for_harvest} DRHP</Badge>
                         </Col>
                     </Row>

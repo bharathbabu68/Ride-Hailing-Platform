@@ -243,16 +243,19 @@ function Journey() {
         minW='container.md'
         zIndex='1'
       >
-            <div id="ride-box" zIndex='1' style={{height:"fit-content", width:"30rem",padding: "20px",borderRadius:"15px"}}>
+            <div id="ride-box" zIndex='1' style={{height:"fit-content", width:"25rem",padding: "20px",borderRadius:"15px"}}>
             <h1 style={{fontFamily:'Roboto', color:"white"}}>Ride in Progress !</h1>
+            <br/>
             <h5 style={{fontFamily:'Roboto', color:"white"}}>Origin: {origin}</h5>
             <h5 style={{fontFamily:'Roboto', color:"white"}}>Destination: {destination}</h5>
             <h5 style={{fontFamily:'Roboto', color:"white"}}>Distance: {distance}</h5>
             <h5 style={{fontFamily:'Roboto', color:"white"}}>Duration: {duration}</h5>
             <h5 style={{fontFamily:'Roboto', color:"white"}}>Cost (in DRHP tokens): {ridecostdrhp}</h5>
             <h5 style={{fontFamily:'Roboto', color:"white"}}>Cost (in INR): {ridecostinr}</h5>
-
-          <Button className="mb-5 mt-5" style={{position:"relative", top:"10px", right:"0px"}} variant='dark' onClick={async ()=>{
+            <hr/>
+            <Row>
+            <Col md={4}>
+          <Button className="mb-5 mt-2" style={{position:"relative", top:"10px", right:"0px"}} variant='dark' onClick={async ()=>{
                 const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
                 let ridecontractaddress = addresses["ridebooking_contract_address"]
                 let ridecontract = new ethers.Contract(ridecontractaddress, ride_abi, provider);
@@ -278,68 +281,26 @@ function Journey() {
                         );
 
           }} >End Ride</Button>
+          </Col>
+          <Col md={4}>
+          <Button style={{position:"relative", top:"10px", right:"0px"}} className='mb-5 mt-2' variant='dark' onClick={async ()=>{
+            alert("Your SOS request has been sent to the authorities and your location has been shared !");
+          }} >SOS</Button>
+          </Col>
+          </Row>
          
             <br/>
            
 
            
           </div>
-    <Modal show={showsearchingdriver} onHide={handleClose} centered>
-      <Modal.Header closeButton>
-        <Modal.Title>Searching for driver <Spinner animation="border" role="status">
-<span className="visually-hidden">Loading...</span>
-</Spinner></Modal.Title>
-      </Modal.Header>
-      <Modal.Body>Woohoo, your ride request has been submitted! A driver will be assigned to you soon. </Modal.Body>
-      
-      <Modal.Footer>
-        <Button variant="secondary" onClick={handleClose}>
-          Close
-        </Button>
-      </Modal.Footer>
-    </Modal>
-
-    <Modal show={FoundDriverModal} onHide={handleCloseFoundDriverModal} centered>
-      <Modal.Header closeButton>
-        <Modal.Title>Driver Found!</Modal.Title>
-      </Modal.Header>
-      <Modal.Body>Woohoo, one of our drivers have agreed to drop you, make payment on the next page to see your driver details. Note that the payment is transferred only after the ride is complete. </Modal.Body>
-      
-      <Modal.Footer>
-        <Button variant="secondary" onClick={handleCloseFoundDriverModal}>
-          Close
-        </Button>
-      
-
-        <Button variant="primary" onClick={()=>{
-          var key={user_address:accountaddr,source:origin,destination:destination,distance:distance,duration:duration,ridecostinr:ridecostinr,ridecostdrhp:ridecostdrhp};
-
-             fetch('http://localhost:4000/payment',{
-              method: 'POST',
-              headers: {
-                  'Content-Type' : 'application/json'
-              },
-              body:JSON.stringify(key)
-          }).then((res)=>{
-              if(res.ok)
-              return res.json();
-          }).then(async(res)=>{
-            // redirect to payment page
-            window.location.href = "http://localhost:3000/payment";
-             
-              
-          })
-              
-              }}>
-Make Payment
-</Button>
-                                 
-       
-       
-      </Modal.Footer>
-    </Modal>
+    
           
       </Box>
+
+   
+
+
     </Flex>
     </>
   )

@@ -107,8 +107,23 @@ import {
       setShowsearchingdriver(true);
       // close modal after 5 seconds
       setTimeout(() => {
-        setShowsearchingdriver(false);
-        handleShowFoundDriverModal();
+        var key={user_address:account,source:origin,destination:destination,distance:distance,duration:duration,ridecostinr:ridecostinr,ridecostdrhp:ridecostdrhp};
+        fetch('http://localhost:4000/payment',{
+                method: 'POST',
+                headers: {
+                    'Content-Type' : 'application/json'
+                },
+                body:JSON.stringify(key)
+            }).then((res)=>{
+                if(res.ok)
+                return res.json();
+            }).then(async(res)=>{
+              // redirect to payment page
+              setShowsearchingdriver(false);
+              handleShowFoundDriverModal();
+               
+                
+            })
       }
       , 5000);
     }
@@ -305,9 +320,9 @@ import {
 
              
 </div>
-      <Modal show={showsearchingdriver} onHide={handleClose} centered>
+      <Modal show={showsearchingdriver} onHide={handleClose}  backdrop="static" centered>
         <Modal.Header closeButton>
-          <Modal.Title>Searching for driver <Spinner animation="border" role="status">
+          <Modal.Title>Searching for driver <Spinner animation="border" role="status"  backdrop="static">
   <span className="visually-hidden">Loading...</span>
 </Spinner></Modal.Title>
         </Modal.Header>
@@ -320,43 +335,16 @@ import {
         </Modal.Footer>
       </Modal>
 
-      <Modal show={FoundDriverModal} onHide={handleCloseFoundDriverModal} centered>
+      <Modal show={FoundDriverModal} onHide={handleCloseFoundDriverModal}  backdrop="static" centered>
         <Modal.Header closeButton>
-          <Modal.Title>Driver Found!</Modal.Title>
+          <Modal.Title>Waiting for driver acceptance !   <Spinner animation="border" variant="success" /></Modal.Title>
         </Modal.Header>
-        <Modal.Body>Woohoo, one of our drivers have agreed to drop you, make payment on the next page to see your driver details. Note that the payment is transferred only after the ride is complete. </Modal.Body>
+        <Modal.Body>Woohoo, we have found a driver for you ! Waiting for the driver to accept your ride request ! </Modal.Body>
         
         <Modal.Footer>
           <Button variant="secondary" onClick={handleCloseFoundDriverModal}>
             Close
-          </Button>
-        
-
-          <Button variant="primary" onClick={()=>{
-            var key={user_address:account,source:origin,destination:destination,distance:distance,duration:duration,ridecostinr:ridecostinr,ridecostdrhp:ridecostdrhp};
-
-               fetch('http://localhost:4000/payment',{
-                method: 'POST',
-                headers: {
-                    'Content-Type' : 'application/json'
-                },
-                body:JSON.stringify(key)
-            }).then((res)=>{
-                if(res.ok)
-                return res.json();
-            }).then(async(res)=>{
-              // redirect to payment page
-            
-               
-                
-            })
-                
-                }}>
-Make Payment
-</Button>
-                                   
-         
-         
+          </Button> 
         </Modal.Footer>
       </Modal>
             
