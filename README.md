@@ -14,3 +14,6 @@ Overall, our platform aims to achieve the following objectives:
 - Staking mechanism of ERC-20 to enable the users to earn interest by staking their DRHP tokens through our protocol. 
 - Driver incentivization using ERC-721 tokens (NFTs) to unlock potential revenue sharing from the company. 
 - On-chain governance to enable the community to submit proposals and govern our project through various business decisions. 
+
+## Overall Project Diagram
+![Project_Flowchart](https://github.com/bharathbabu68/Ride-Hailing-Platform/blob/main/resources/flowchart.jpg)
